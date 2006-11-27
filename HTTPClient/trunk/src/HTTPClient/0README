@@ -1,0 +1,40 @@
+
+This is Version 0.4-dev of the HTTPClient package. This is a developement
+snapshot, made available upon request. The latest public version should
+always be available at http://www.innovation.ch/java/HTTPClient/ .
+Copyright (C) 1996-1998  Ronald Tschalär
+
+
+Installation:
+-------------
+
+Unpacking the .tar.Z or .zip should've created a subdirectory
+'HTTPClient'. Put this directory somewhere in your classpath. If you
+haven't done the following already I recommend setting up a main
+directory that contains a subdirectory for every java package you
+install, and then add this main directory to your classpath - that way
+for new packages all you have to do is unpack them into a subdirectory
+under the main directory and away you go. Now add a 'import
+HTTPClient.*;' statement to each of your files that use any part of the
+package and you're set to go.
+
+
+Use:
+----
+
+See the documentation in the doc subdirectory. The beginning is at
+HTTPClient/doc/index.html .
+
+
+Comments:
+---------
+
+Mail suggestions, comments, bugs, enhancement-requests to:
+
+ronald@innovation.ch
+
+
+  Have fun,
+
+  Ronald
+
