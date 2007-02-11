@@ -30,6 +30,7 @@
 package HTTPClient;
 
 import java.net.URL;
+import java.text.DateFormat;
 import java.util.Date;
 import java.util.BitSet;
 import java.util.Vector;
@@ -544,7 +545,7 @@ public class Util
 					 beg);
 
 	    end = beg+1;			// extract element name
-	    while (end < len  &&  !Character.isSpace(ch = header.charAt(end)) &&
+	    while (end < len  &&  !Character.isWhitespace(ch = header.charAt(end)) &&
 		   ch != '='  &&  ch != ','  &&  ch != ';')
 		end++;
 	    elem_name = header.substring(beg, end);
@@ -590,7 +591,7 @@ public class Util
 
 		end = beg+1;			// extract param name
 		while (end < len  &&
-		       !Character.isSpace(ch = header.charAt(end))  &&
+		       !Character.isWhitespace(ch = header.charAt(end))  &&
 		       ch != '='  &&  ch != ','  &&  ch != ';')
 		    end++;
 		param_name = header.substring(beg, end);
@@ -677,7 +678,7 @@ public class Util
 	else					// it's a simple token value
 	{
 	    end = beg;
-	    while (end < len  &&  !Character.isSpace(buf[end])  &&
+	    while (end < len  &&  !Character.isWhitespace(buf[end])  &&
 		   buf[end] != ','  &&  buf[end] != ';')
 		end++;
 
@@ -745,7 +746,7 @@ public class Util
 	else					// it's a simple token value
 	{
 	    end = beg;
-	    while (end < len  &&  !Character.isSpace(ch = header.charAt(end)) &&
+	    while (end < len  &&  !Character.isWhitespace(ch = header.charAt(end)) &&
 		   ch != ','  &&  ch != ';')
 		end++;
 
@@ -862,7 +863,7 @@ public class Util
     final static int skipSpace(String str, int pos)
     {
 	int len = str.length();
-	while (pos < len  &&  Character.isSpace(str.charAt(pos)))  pos++;
+	while (pos < len  &&  Character.isWhitespace(str.charAt(pos)))  pos++;
 	return pos;
     }
 
@@ -877,7 +878,7 @@ public class Util
     final static int skipSpace(char[] str, int pos)
     {
 	int len = str.length;
-	while (pos < len  &&  Character.isSpace(str[pos]))  pos++;
+	while (pos < len  &&  Character.isWhitespace(str[pos]))  pos++;
 	return pos;
     }
 
@@ -893,7 +894,7 @@ public class Util
     final static int findSpace(String str, int pos)
     {
 	int len = str.length();
-	while (pos < len  &&  !Character.isSpace(str.charAt(pos)))  pos++;
+	while (pos < len  &&  !Character.isWhitespace(str.charAt(pos)))  pos++;
 	return pos;
     }
 
@@ -909,7 +910,7 @@ public class Util
     final static int findSpace(char[] str, int pos)
     {
 	int len = str.length;
-	while (pos < len  &&  !Character.isSpace(str[pos]))  pos++;
+	while (pos < len  &&  !Character.isWhitespace(str[pos]))  pos++;
 	return pos;
     }
 
@@ -1356,6 +1357,25 @@ public class Util
     {
 	t.printStackTrace(System.err);
 	System.err.flush();
+    }
+    
+    public static void getBytes(String str,byte[] to,int toOffset)
+    {
+        byte[] tmp=str.getBytes();
+        System.arraycopy(tmp,0,to,toOffset,tmp.length);
+    }
+
+    public static void getBytes(String str, int len, byte[] to, int toOffset) {
+         byte[] tmp=str.getBytes();
+        System.arraycopy(tmp,0,to,toOffset,len);
+   }
+
+    public static Date parseDate(String raw_date) throws IllegalArgumentException{
+        try {
+            return DateFormat.getDateTimeInstance().parse(raw_date);
+        } catch (java.text.ParseException ex) {
+            throw new IllegalArgumentException(ex.getMessage());
+        }
     }
 }
 

@@ -39,7 +39,6 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Vector;
 import java.util.Hashtable;
-import java.applet.Applet;
 
 /**
  * This class implements http protocol requests; it contains most of HTTP/1.1
@@ -539,13 +538,13 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 	 *
 	 * @param applet the current applet
 	 */
-	public HTTPConnection(Applet applet) throws ProtocolNotSuppException
+/*	public HTTPConnection(Applet applet) throws ProtocolNotSuppException
 	{
 		this(applet.getCodeBase().getProtocol(),
 			 applet.getCodeBase().getHost(),
 			 applet.getCodeBase().getPort());
 	}
-
+*/
 /**
 	 * Constructs a connection to the specified host on port 80
 	 *
@@ -1037,8 +1036,7 @@ return true;
 
 		if (data != null && data.length() > 0)
 		{
-			tmp = new byte[data.length()];
-			data.getBytes(0, data.length(), tmp, 0);
+			tmp = data.getBytes();
 		}
 
 		return Post(file, tmp, headers);
@@ -1156,8 +1154,7 @@ return true;
 
 		if (data != null)
 		{
-			tmp = new byte[data.length()];
-			data.getBytes(0, data.length(), tmp, 0);
+			tmp =data.getBytes();
 		}
 
 		return Put(file, tmp, headers);

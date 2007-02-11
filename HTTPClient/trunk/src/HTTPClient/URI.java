@@ -203,8 +203,8 @@ public class URI
 
 	// trim()
 
-	while (pos < len  &&  Character.isSpace(uri[pos]))    pos++;
-	while (len > 0    &&  Character.isSpace(uri[len-1]))  len--;
+	while (pos < len  &&  Character.isWhitespace(uri[pos]))    pos++;
+	while (len > 0    &&  Character.isWhitespace(uri[len-1]))  len--;
 
 
 	// strip the special "url" or "uri" scheme

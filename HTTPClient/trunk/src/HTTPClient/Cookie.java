@@ -204,7 +204,7 @@ public class Cookie implements java.io.Serializable
 		if (name.equalsIgnoreCase("expires"))
 		{
 		    try
-			{ curr.expires = new Date(value); }
+			{ curr.expires = Util.parseDate(value); }
 		    catch (IllegalArgumentException iae)
 		    {
 			/* More broken servers to deal with... Ignore expires

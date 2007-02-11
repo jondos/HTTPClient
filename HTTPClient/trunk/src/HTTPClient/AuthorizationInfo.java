@@ -855,7 +855,7 @@ public class AuthorizationInfo implements GlobalConstants, Cloneable
 	AuthorizationInfo auth_arr[] = new AuthorizationInfo[0],
 			  curr;
 
-	while (Character.isSpace(buf[len-1]))  len--;
+	while (Character.isWhitespace(buf[len-1]))  len--;
 
 	while (true)			// get all challenges
 	{
@@ -897,7 +897,7 @@ public class AuthorizationInfo implements GlobalConstants, Cloneable
 
 		// extract name
 		end = beg + 1;
-		while (end < len  &&  !Character.isSpace(buf[end]) &&
+		while (end < len  &&  !Character.isWhitespace(buf[end]) &&
 		       buf[end] != '='  &&  buf[end] != ',')
 		    end++;
 

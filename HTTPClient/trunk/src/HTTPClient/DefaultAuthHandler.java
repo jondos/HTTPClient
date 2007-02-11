@@ -37,22 +37,6 @@ import java.net.UnknownHostException;
 import java.util.Vector;
 import java.util.StringTokenizer;
 
-import java.awt.Frame;
-import java.awt.Panel;
-import java.awt.Label;
-import java.awt.Button;
-import java.awt.Dimension;
-import java.awt.TextField;
-import java.awt.GridLayout;
-import java.awt.BorderLayout;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowAdapter;
-
-
 /**
  * This class is the default authorization handler. It currently handles the
  * authentication schemes "Basic", "Digest", "NTLM", and "SOCKS5" (used for
@@ -216,11 +200,11 @@ public class DefaultAuthHandler implements AuthorizationHandler, GlobalConstants
 
 	// Ask the user for username/password
         /** @author modified by Stefan Köpsell, 04/11/24 */
-	//if (!req.allowUI())
-	//    return null;
+	if (!req.allowUI()||prompter==null)
+	    return null;
         /** @author modified by Stefan Köpsell, 04/11/24 */
-	if (prompter == null)
-	    setDefaultPrompter();
+	//if (prompter == null)
+	//    setDefaultPrompter();
 
 	NVPair answer = prompter.getUsernamePassword(challenge);
 	if (answer == null)
@@ -1237,8 +1221,9 @@ public class DefaultAuthHandler implements AuthorizationHandler, GlobalConstants
 	    // send type 1 message
 
 	    msg = new byte[32 + host.length() + dom.length()];
-	    "NTLMSSP".getBytes(0, 7, msg, 0);		// NTLMSSP message
-	    msg[8]  = 1;				// type 1
+	    //"NTLMSSP".getBytes(0, 7, msg, 0);		// NTLMSSP message
+	    Util.getBytes("NTLMSSP",msg,0);
+            msg[8]  = 1;				// type 1
 	    int off = 32, len;
 
       /** @author  modified by Stefan Lieske, 2005/02/13 */
@@ -1257,8 +1242,9 @@ public class DefaultAuthHandler implements AuthorizationHandler, GlobalConstants
 	    msg[27] = (byte) (len >> 8);
 	    msg[28] = (byte) off;			// host offset
 	    msg[29] = (byte) (off >> 8);
-	    host.getBytes(0, len, msg, off);		// host
-	    off += len;
+//	    host.getBytes(0, len, msg, off);		// host
+	    Util.getBytes(host,len,msg,off);
+            off += len;
 
 	    len = dom.length();
 	    msg[16] = (byte) len;			// domain length
@@ -1267,7 +1253,8 @@ public class DefaultAuthHandler implements AuthorizationHandler, GlobalConstants
 	    msg[19] = (byte) (len >> 8);
 	    msg[20] = (byte) off;			// domain offset
 	    msg[21] = (byte) (off >> 8);
-	    dom.getBytes(0, len, msg, off);		// domain
+	    Util.getBytes(dom,len,msg,off);
+            //dom.getBytes(0, len, msg, off);		// domain
 	    off += len;
 	}
 	else					// expect type 2 message
@@ -1275,8 +1262,7 @@ public class DefaultAuthHandler implements AuthorizationHandler, GlobalConstants
 	    // decode message
 
 	    String enc_msg = challenge.getCookie();
-	    byte tmp[] = new byte[enc_msg.length()];
-	    enc_msg.getBytes(0, tmp.length, tmp, 0);
+	    byte tmp[] = enc_msg.getBytes();
 	    msg = Codecs.base64Decode(tmp);
       /** @author  modified by Stefan Lieske, 2005/02/13 */
       /* see http://davenport.sourceforge.net/ntlm.html for message format */      
@@ -1505,7 +1491,7 @@ public class DefaultAuthHandler implements AuthorizationHandler, GlobalConstants
 
 	// return new AuthorizationInfo
 
-	String cookie = new String(Codecs.base64Encode(msg), 0);
+	String cookie = new String(Codecs.base64Encode(msg));
 
 	AuthorizationInfo cred = new AuthorizationInfo(challenge.getHost(),
 						       challenge.getPort(),
@@ -1602,8 +1588,8 @@ public class DefaultAuthHandler implements AuthorizationHandler, GlobalConstants
 
 	// store in byte array, truncating or extending to 14 bytes
 	byte[] keys = new byte[14];
-	passw.getBytes(0, Math.min(passw.length(), 14), keys, 0);
-
+	//passw.getBytes(0, Math.min(passw.length(), 14), keys, 0);
+        Util.getBytes(passw,Math.min(passw.length(), 14),keys,0);
 	// DES encode the magic value with the above generated keys
 	byte[] resp  = new byte[21],
 	       /* the following must decrypted with an all-zeroes key
@@ -1700,47 +1686,6 @@ public class DefaultAuthHandler implements AuthorizationHandler, GlobalConstants
 	prompter = prompt;
 	return prev;
     }
-
-
-    /**
-     * Set the default authorization prompter. It first tries to figure out
-     * if the AWT is running by enumerating the top level threads and looking
-     * for any that start with "AWT-". If any are found then the GUI popup
-     * prompter is used; otherwise the command line prompter is used.
-     */
-    private synchronized static void setDefaultPrompter()
-    {
-	if (prompter != null)  return;
-
-
-	// Try and figure out if the AWT is running
-
-	boolean awt_running = false;
-
-	ThreadGroup root = Thread.currentThread().getThreadGroup();
-	while (root.getParent() != null)  root = root.getParent();
-
-	Thread[] t_list = new Thread[root.activeCount() + 5];
-	int t_num = root.enumerate(t_list);
-	for (int idx=0; idx<t_num; idx++)
-	{
-	    if (t_list[idx].getName().startsWith("AWT-"))
-	    {
-		awt_running = true;
-		break;
-	    }
-	}
-
-
-	// if the AWT is running use the popup box; else use the
-	// the command line prompter.
-
-	if (awt_running)
-	    prompter = new SimpleAuthPopup();
-	else
-	    prompter = new SimpleAuthPrompt();
-    }
-
 
     private static final byte[] unHex(String hex)
     {
@@ -1953,380 +1898,4 @@ public class DefaultAuthHandler implements AuthorizationHandler, GlobalConstants
 }
 
 
-class SimpleAuthPopup implements AuthorizationPrompter
-{
-    private static BasicAuthBox inp = null;
-
-    /**
-     * the method called by DefaultAuthHandler.
-     *
-     * @return the username/password pair
-     */
-    public NVPair getUsernamePassword(AuthorizationInfo challenge)
-    {
-	String line1, line2, line3;
-
-	if (challenge.getScheme().equalsIgnoreCase("SOCKS5"))
-	{
-	    line1 = "Enter username and password for SOCKS server on host";
-	    line2 = challenge.getHost();
-	    line3 = "Authentication Method: username/password";
-	}
-	else
-	{
-	    line1 = "Enter username and password for realm `" +
-		    challenge.getRealm() + "'";
-	    line2 = "on host " + challenge.getHost() + ":" +
-		    challenge.getPort();
-	    line3 = "Authentication Scheme: " + challenge.getScheme();
-	}
-
-	if (inp == null)
-	{
-	    synchronized(getClass())
-	    {
-		if (inp == null)
-		    inp = new BasicAuthBox();
-	    }
-	}
-
-	return inp.getInput(line1, line2, line3, challenge.getScheme());
-    }
-
-
-    /**
-     * This class implements a simple popup that request username and password
-     * used for the "basic" and "digest" authentication schemes.
-     *
-     * @version	0.3  10/12/1997
-     * @author	Ronald Tschal&auml;r
-     */
-    private static class BasicAuthBox extends Frame
-    {
-	private final static String title = "Authorization Request";
-	private Dimension           screen;
-	private Label               line1, line2, line3;
-	private TextField           user, pass;
-	private int                 done;
-	private final static int    OK = 1, CANCEL = 0;
-
-
-	/**
-	 * Constructs the popup with two lines of text above the input fields
-	 */
-	BasicAuthBox()
-	{
-	    super(title);
-
-	    screen = getToolkit().getScreenSize();
-
-	    addNotify();
-	    addWindowListener(new Close());
-	    setLayout(new BorderLayout());
-
-	    Panel p = new Panel(new GridLayout(3,1));
-	    p.add(line1 = new Label());
-	    p.add(line2 = new Label());
-	    p.add(line3 = new Label());
-	    add("North", p);
-
-	    p = new Panel(new GridLayout(2,1));
-	    p.add(new Label("Username:"));
-	    p.add(new Label("Password:"));
-	    add("West", p);
-	    p = new Panel(new GridLayout(2,1));
-	    p.add(user = new TextField(30));
-	    p.add(pass = new TextField(30));
-	    pass.addActionListener(new Ok());
-	    pass.setEchoChar('*');
-	    add("East", p);
-
-	    GridBagLayout gb = new GridBagLayout();
-	    p = new Panel(gb);
-	    GridBagConstraints constr = new GridBagConstraints();
-	    Panel pp = new Panel();
-	    p.add(pp);
-	    constr.gridwidth = GridBagConstraints.REMAINDER;
-	    gb.setConstraints(pp, constr);
-	    constr.gridwidth = 1;
-	    constr.weightx = 1.0;
-	    Button b;
-	    p.add(b = new Button("  OK  "));
-	    b.addActionListener(new Ok());
-	    constr.weightx = 1.0;
-	    gb.setConstraints(b, constr);
-	    p.add(b = new Button("Clear"));
-	    b.addActionListener(new Clear());
-	    constr.weightx = 2.0;
-	    gb.setConstraints(b, constr);
-	    p.add(b = new Button("Cancel"));
-	    b.addActionListener(new Cancel());
-	    constr.weightx = 1.0;
-	    gb.setConstraints(b, constr);
-	    add("South", p);
-
-	    pack();
-	}
-
-
-	/**
-	 * our event handlers
-	 */
-	private class Ok implements ActionListener
-	{
-	    public void actionPerformed(ActionEvent ae)
-	    {
-		done = OK;
-		synchronized (BasicAuthBox.this)
-		    { BasicAuthBox.this.notifyAll(); }
-	    }
-	}
-
-	private class Clear implements ActionListener
-	{
-	    public void actionPerformed(ActionEvent ae)
-	    {
-		user.setText("");
-		pass.setText("");
-		user.requestFocus();
-	    }
-	}
-
-	private class Cancel implements ActionListener
-	{
-	    public void actionPerformed(ActionEvent ae)
-	    {
-		done = CANCEL;
-		synchronized (BasicAuthBox.this)
-		    { BasicAuthBox.this.notifyAll(); }
-	    }
-	}
-
-
-	private class Close extends WindowAdapter
-	{
-	    public void windowClosing(WindowEvent we)
-	    {
-		new Cancel().actionPerformed(null);
-	    }
-	}
-
-
-	/**
-	 * the method called by SimpleAuthPopup.
-	 *
-	 * @return the username/password pair
-	 */
-	synchronized NVPair getInput(String l1, String l2, String l3,
-				     String scheme)
-	{
-	    line1.setText(l1);
-	    line2.setText(l2);
-	    line3.setText(l3);
-
-	    line1.invalidate();
-	    line2.invalidate();
-	    line3.invalidate();
-
-	    setResizable(true);
-	    pack();
-	    setResizable(false);
-	    setLocation((screen.width-getPreferredSize().width)/2,
-			(int) ((screen.height-getPreferredSize().height)/2*.7));
-
-	    boolean user_focus = true;
-	    if (scheme.equalsIgnoreCase("NTLM"))
-	    {
-		// prefill the user field with the username
-		try
-		{
-		    user.setText(System.getProperty("user.name", ""));
-		    user_focus = false;
-		}
-		catch (SecurityException se)
-		    { }
-	    }
-
-	    setVisible(true);
-	    if (user_focus)
-		user.requestFocus();
-	    else
-		pass.requestFocus();
-
-	    try { wait(); } catch (InterruptedException e) { }
-
-	    setVisible(false);
-
-	    NVPair result = new NVPair(user.getText(), pass.getText());
-	    user.setText("");
-	    pass.setText("");
-
-	    if (done == CANCEL)
-		return null;
-	    else
-		return result;
-	}
-    }
-}
-
-
-/**
- * This class implements a simple command line prompter that request
- * username and password used for the "basic" and "digest" authentication
- * schemes.
- *
- * @version	0.4  12/05/1998
- * @author	Ronald Tschal&auml;r
- */
-class SimpleAuthPrompt implements AuthorizationPrompter
-{
-    /**
-     * the method called by DefaultAuthHandler.
-     *
-     * @return the username/password pair
-     */
-    public synchronized NVPair getUsernamePassword(AuthorizationInfo challenge)
-    {
-	String user, pass;
-
-	if (challenge.getScheme().equalsIgnoreCase("SOCKS5"))
-	{
-	    System.out.println("Enter username and password for SOCKS " +
-			       "server on host " + challenge.getHost());
-	    System.out.println("Authentication Method: username/password");
-	}
-	else
-	{
-	    System.out.println("Enter username and password for realm `" +
-			       challenge.getRealm() + "' on host " +
-			       challenge.getHost() + ":" +
-			       challenge.getPort());
-	    System.out.println("Authentication Scheme: " +
-			       challenge.getScheme());
-	}
-
-
-	// get username
-
-	BufferedReader inp =
-		    new BufferedReader(new InputStreamReader(System.in));
-	System.out.print("Username: "); System.out.flush();
-	try
-	    { user = inp.readLine(); }
-	catch (IOException ioe)
-	    { return null; }
-	if (user == null  ||  user.length() == 0)
-	    return null;		// cancel'd
-
-
-	// get password
-
-	disableEcho();
-	System.out.print("Password: "); System.out.flush();
-	try
-	    { pass = inp.readLine(); }
-	catch (IOException ioe)
-	    { return null; }
-	System.out.println();
-	enableEcho();
-
-	if (pass == null)
-	    return null;		// cancel'd
-
-
-	// done
-
-	return new NVPair(user, pass);
-    }
-
-
-    /*
-     * Disable the echoing of typed characters
-     */
-    private static void disableEcho()
-    {
-	String os = System.getProperty("os.name");
-
-	if (os.equalsIgnoreCase("Windows 95")  ||
-	    os.equalsIgnoreCase("Windows NT"))
-	{
-	    String echo_off = "echo off";
-	    try
-		{ Runtime.getRuntime().exec(echo_off).waitFor(); }
-	    catch (Exception e)
-		{ }
-	}
-	else if (os.equalsIgnoreCase("Windows NT"))
-	    ;	// ???
-	else if (os.equalsIgnoreCase("Windows")  ||
-		 os.equalsIgnoreCase("16-bit Windows"))
-	    ;	// ???
-	else if (os.equalsIgnoreCase("OS/2"))
-	    ;	// ???
-	else if (os.equalsIgnoreCase("Mac OS")  ||
-		 os.equalsIgnoreCase("MacOS"))
-	    ;	// ???
-	else if (os.equalsIgnoreCase("OpenVMS") ||
-		 os.equalsIgnoreCase("VMS"))
-	{
-	    String echo_off = "SET TERMINAL /NOECHO";
-	    try
-		{ Runtime.getRuntime().exec(echo_off).waitFor(); }
-	    catch (Exception e)
-		{ }
-	}
-	else			// probably unix
-	{
-	    String[] echo_off = { "/bin/sh", "-c", "stty -echo < /dev/tty" };
-	    try
-		{ Runtime.getRuntime().exec(echo_off).waitFor(); }
-	    catch (Exception e)
-		{ }
-	}
-    }
-
-
-    /*
-     * (Re-)enable the echoing of typed characters
-     */
-    private static void enableEcho()
-    {
-	String os = System.getProperty("os.name");
-
-	if (os.equalsIgnoreCase("Windows 95")  ||
-	    os.equalsIgnoreCase("Windows NT"))
-	{
-	    String echo_on = "echo on";
-	    try
-		{ Runtime.getRuntime().exec(echo_on).waitFor(); }
-	    catch (Exception e)
-		{ }
-	}
-	else if (os.equalsIgnoreCase("Windows")  ||
-		 os.equalsIgnoreCase("16-bit Windows"))
-	    ;	// ???
-	else if (os.equalsIgnoreCase("OS/2"))
-	    ;	// ???
-	else if (os.equalsIgnoreCase("Mac OS")  ||
-		 os.equalsIgnoreCase("MacOS"))
-	    ;	// ???
-	else if (os.equalsIgnoreCase("OpenVMS")  ||
-		 os.equalsIgnoreCase("VMS"))
-	{
-	    String echo_on = "SET TERMINAL /ECHO";
-	    try
-		{ Runtime.getRuntime().exec(echo_on).waitFor(); }
-	    catch (Exception e)
-		{ }
-	}
-	else			// probably unix
-	{
-	    String[] echo_on = { "/bin/sh", "-c", "stty echo < /dev/tty" };
-	    try
-		{ Runtime.getRuntime().exec(echo_on).waitFor(); }
-	    catch (Exception e)
-		{ }
-	}
-    }
-}
 

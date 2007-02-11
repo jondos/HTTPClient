@@ -334,8 +334,7 @@ class MD4
 	{
 	    if (args[0].equals("-s"))
 	    {
-		byte[] s = new byte[args[1].length()];
-		args[1].getBytes(0, s.length, s, 0);
+		byte[] s = args[1].getBytes();
 		System.out.println("MD4 (\"" + args[1] + "\") = " + new MD4(s));
 	    }
 	    else if (args[0].equals("-x"))
@@ -378,8 +377,7 @@ class MD4
 
 	for (int idx=0; idx<tests.length; idx++)
 	{
-	    byte[] s = new byte[tests[idx][0].length()];
-	    tests[idx][0].getBytes(0, s.length, s, 0);
+	    byte[] s = tests[idx][0].getBytes();
 
 	    if (!new MD4(s).toString().equals(tests[idx][1]))
 	    {

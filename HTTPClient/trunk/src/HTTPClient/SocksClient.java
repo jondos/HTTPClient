@@ -274,7 +274,7 @@ public class SocksClient implements GlobalConstants
 	    catch (SecurityException se)
 		{ user_str = "";	/* try it anyway */ }
 	    user = new byte[user_str.length()+1];
-	    user_str.getBytes(0, user_str.length(), user, 0);
+	    System.arraycopy(user_str.getBytes(),0, user, 0,user_str.length());
 	    user[user_str.length()] = 0;	// 0-terminated string
 	}
 
@@ -283,7 +283,7 @@ public class SocksClient implements GlobalConstants
 
 	if (DebugSocks)
 	    Util.logLine("Socks: Sending connect request for user " +
-			 new String(user, 0, 0, user.length-1));
+			 new String(user));
 
 	buffer.reset();
 	buffer.write(4);				// version
@@ -294,8 +294,7 @@ public class SocksClient implements GlobalConstants
 	buffer.write(user, 0, user.length);		// user
 	if (v4A)
 	{
-	    byte[] host_buf = new byte[host.length()];
-	    host.getBytes(0, host.length(), host_buf, 0);
+	    byte[] host_buf = host.getBytes();
 	    buffer.write(host_buf, 0, host_buf.length);	// host name
 	    buffer.write(0);				// terminating 0
 	}
@@ -333,7 +332,7 @@ public class SocksClient implements GlobalConstants
 		throw new SocksException("Connection request rejected: " +
 					 "identd reports different user-id " +
 					 "from "+
-					 new String(user, 0, 0, user.length-1));
+					 new String(user));
 	    default:	// unknown status
 		throw new SocksException("Connection request rejected: " +
 					 "unknown error " + sts);
@@ -425,8 +424,7 @@ public class SocksClient implements GlobalConstants
 	buffer.write(0);				// reserved - must be 0
 	buffer.write(DMNAME);				// address type
 	buffer.write(host.length() & 0xff);		// address length
-	byte[] hname = new byte[host.length()];
-	host.getBytes(0, host.length(), hname, 0);
+	byte[] hname = host.getBytes();
 	buffer.write(hname, 0, hname.length);		// address
 	buffer.write((port >> 8) & 0xff);		// port
 	buffer.write(port & 0xff);
@@ -568,10 +566,12 @@ public class SocksClient implements GlobalConstants
 	buffer = new byte[1+1+user_str.length()+1+pass_str.length()];
 	buffer[0] = 1;				// version 1 (subnegotiation)
 	buffer[1] = (byte) user_str.length();		// Username length
-	user_str.getBytes(0, buffer[1], buffer, 2);	// Username
-	buffer[2+buffer[1]] = (byte) pass_str.length();	// Password length
-	pass_str.getBytes(0, buffer[2+buffer[1]], buffer, 2+buffer[1]+1);// Password
-	out.write(buffer);
+	//user_str.getBytes(0, buffer[1], buffer, 2);	// Username
+	Util.getBytes(user_str,buffer[1],buffer,2);
+        buffer[2+buffer[1]] = (byte) pass_str.length();	// Password length
+	//pass_str.getBytes(0, buffer[2+buffer[1]], buffer, 2+buffer[1]+1);// Password
+	Util.getBytes(pass_str,buffer[2+buffer[1]],buffer,2+buffer[1]+1);
+        out.write(buffer);
 
 
 	// get reply

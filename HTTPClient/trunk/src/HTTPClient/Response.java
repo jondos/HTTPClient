@@ -347,7 +347,8 @@ public final class Response implements RoResponse, GlobalConstants, Cloneable
 	Date date;
 
 	try
-	    { date = new Date(raw_date); }
+	    { 
+            date = Util.parseDate(raw_date); }
 	catch (IllegalArgumentException iae)
 	{
 	    long time;
@@ -454,7 +455,7 @@ public final class Response implements RoResponse, GlobalConstants, Cloneable
 	Date   date;
 
 	try
-	    { date = new Date(raw_date); }
+	    { date = Util.parseDate(raw_date); }
 	catch (IllegalArgumentException iae)
 	{
 	    // some servers erroneously send a number, so let's try that
@@ -880,7 +881,7 @@ public final class Response implements RoResponse, GlobalConstants, Cloneable
 			if ((c = inp.read()) == -1)
 			    throw new EOFException("Encountered premature EOF "
 						   + "while reading Version");
-		    } while (Character.isSpace( (char) (c & 0xFF) )) ;
+		    } while (Character.isWhitespace( (char) (c & 0xFF) )) ;
 		    buf[0] = (byte) (c & 0xFF);
 		    buf_pos = 1;
 		}
@@ -1174,7 +1175,7 @@ public final class Response implements RoResponse, GlobalConstants, Cloneable
 	{
 	    // get name
 
-	    while (end < len  &&  !Character.isSpace(hdrs[end])  &&
+	    while (end < len  &&  !Character.isWhitespace(hdrs[end])  &&
 		   hdrs[end] != ':')
 		end++;
 	    String hdr_name = new String(hdrs, beg, end-beg);
@@ -1182,7 +1183,7 @@ public final class Response implements RoResponse, GlobalConstants, Cloneable
 
 	    // skip spaces
 
-	    while (end < len  &&  Character.isSpace(hdrs[end]))
+	    while (end < len  &&  Character.isWhitespace(hdrs[end]))
 		end++;
 
 
@@ -1214,7 +1215,7 @@ public final class Response implements RoResponse, GlobalConstants, Cloneable
 	    {
 		// skip spaces
 
-		while (beg < len  &&  Character.isSpace(hdrs[beg]))
+		while (beg < len  &&  Character.isWhitespace(hdrs[beg]))
 		    beg++;
 
 

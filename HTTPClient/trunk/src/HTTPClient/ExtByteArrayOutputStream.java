@@ -94,7 +94,8 @@ final class ExtByteArrayOutputStream
 	if (buf.length - count < len)
 	    buf = Util.resizeArray(buf, Math.max(buf.length*2, count + 2*len));
 
-	str.getBytes(0, len, buf, count);
+//	str.getBytes(0, len, buf, count);
+	Util.getBytes(str,buf,count);
 	count += len;
     }
 
@@ -114,9 +115,11 @@ final class ExtByteArrayOutputStream
 	    buf = Util.resizeArray(buf,
 				Math.max(buf.length*2, count + 2*(len1+len2)));
 
-	str1.getBytes(0, len1, buf, count);
+//        str1.getBytes(0, len1, buf, count);
+	Util.getBytes(str1,buf,count);
 	count += len1;
-	str2.getBytes(0, len2, buf, count);
+//	str2.getBytes(0, len2, buf, count);
+	Util.getBytes(str2,buf,count);
 	count += len2;
     }
 
@@ -137,11 +140,14 @@ final class ExtByteArrayOutputStream
 	    buf = Util.resizeArray(buf,
 			    Math.max(buf.length*2, count + 2*(len1+len2+len3)));
 
-	str1.getBytes(0, len1, buf, count);
+//	str1.getBytes(0, len1, buf, count);
+	Util.getBytes(str1,buf,count);
 	count += len1;
-	str2.getBytes(0, len2, buf, count);
+//	str2.getBytes(0, len2, buf, count);
+	Util.getBytes(str2,buf,count);
 	count += len2;
-	str3.getBytes(0, len3, buf, count);
+//	str3.getBytes(0, len3, buf, count);
+	Util.getBytes(str3,buf,count);
 	count += len3;
     }
 
