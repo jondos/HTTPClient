@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="AN.ON" default="dist" basedir=".">
+  <description>Ant Build file for the various compontens of the AN.ON project</description>
+  <!-- set global properties for this build -->
+  <property name="src" location="src"/>
+  <property name="build" location="build"/>
+  <property name="build.libs" location="build/libs"/>
+  <property name="dist" location="dist"/>
+  <path id="java_1_1_boot_classes" location="${build.libs}/java_1_1_classes.zip"/>
+  <target name="init-dirs">
+    <!-- Create the time stamp -->
+    <tstamp/>
+    <!-- Create the build directory structure used by compile -->
+    <mkdir dir="${build}"/>
+    <mkdir dir="${build.libs}"/>
+  </target>
+  <target name="init-libs" depends="init-dirs">
+    <get src="http://anon.inf.tu-dresden.de/develop/java_1_1_classes.zip" verbose="true" dest="${build.libs}/java_1_1_classes.zip">    </get>
+  </target>
+  <target name="init" depends="init-libs"/>
+  <target name="compile" depends="init" description="compile the source ">
+    <!-- Compile the java code from ${src} into ${build} -->
+    <javac sourcepath="" target="1.1" source="1.2" srcdir="${src}" excludes="${excludesSrcJap}"
+    destdir="${build}" bootclasspathref="java_1_1_boot_classes" classpathref="classpath_all">
+    <include name="**/*.java"/>
+    </javac>
+
+  </target>
+  <target name="dist" depends="compile,make-only-jar" description="generate the distribution">  </target>
+  <target name="make-only-jar">
+    <!-- Create the distribution directory -->
+    <mkdir dir="${dist}"/>
+    <jar jarfile="${dist}/http.jar" index="false" duplicate="preserve">
+      <fileset dir="${build}" includes="**/*.class">
+      </fileset>
+    </jar>
+  </target>
+  <target name="clean" description="clean up">
+    <!-- Delete the ${build} and ${dist} directory trees -->
+    <delete dir="${build}"/>
+    <delete dir="${dist}"/>
+  </target>
+</project>
