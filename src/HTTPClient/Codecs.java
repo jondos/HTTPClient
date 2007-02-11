@@ -154,10 +154,9 @@ public class Codecs
     {
 	if (str == null)  return  null;
 
-	byte data[] = new byte[str.length()];
-	str.getBytes(0, str.length(), data, 0);
-
-	return new String(base64Encode(data), 0);
+	byte data[] = str.getBytes();
+        
+	return new String(base64Encode(data));
     }
 
 
@@ -218,10 +217,8 @@ public class Codecs
     {
 	if (str == null)  return  null;
 
-	byte data[] = new byte[str.length()];
-	str.getBytes(0, str.length(), data, 0);
-
-	return new String(base64Decode(data), 0);
+	byte data[] =str.getBytes();
+	return new String(base64Decode(data));
     }
 
 
@@ -793,14 +790,10 @@ public class Codecs
 	if (bndstr == null)
 	    throw new ParseException("'boundary' parameter not found in Content-type: " + cont_type);
 
-	byte[] srtbndry = new byte[bndstr.length()+4],
-	       boundary = new byte[bndstr.length()+6],
-	       endbndry = new byte[bndstr.length()+6];
-
-	(    "--" + bndstr + "\r\n").getBytes(0, srtbndry.length, srtbndry, 0);
-	("\r\n--" + bndstr + "\r\n").getBytes(0, boundary.length, boundary, 0);
-	("\r\n--" + bndstr + "--"  ).getBytes(0, endbndry.length, endbndry, 0);
-
+	byte[] srtbndry = (    "--" + bndstr + "\r\n").getBytes();
+        byte[] boundary = ("\r\n--" + bndstr + "\r\n").getBytes();
+        byte[] endbndry = ("\r\n--" + bndstr + "--"  ).getBytes();;
+               
 
 	// setup search routines
 
@@ -814,7 +807,7 @@ public class Codecs
 	int start = Util.findStr(srtbndry, bs, data, 0, data.length);
 	if (start == -1)	// didn't even find the start
 	    throw new ParseException("Starting boundary not found: " +
-				     new String(srtbndry,0));
+				     new String(srtbndry));
 	start += srtbndry.length;
 
 	NVPair[] res  = new NVPair[10];
@@ -831,7 +824,7 @@ public class Codecs
 		end = Util.findStr(endbndry, be, data, start, data.length);
 		if (end == -1)
 		    throw new ParseException("Ending boundary not found: " +
-					     new String(endbndry,0));
+					     new String(endbndry));
 		done = true;
 	    }
 
@@ -843,7 +836,7 @@ public class Codecs
 	    {
 		int next = findEOL(data, start) + 2;
 		if (next-2 <= start)  break;	// empty line -> end of headers
-		hdr      = new String(data, 0, start, next-2-start);
+		hdr      = new String(data, start, next-2-start);
 		start    = next;
 
 		// handle line continuation
@@ -852,7 +845,7 @@ public class Codecs
 		       ((ch = data[next]) == ' '  ||  ch == '\t'))
 		{
 		    next   = findEOL(data, start) + 2;
-		    hdr   += new String(data, 0, start, next-2-start);
+		    hdr   += new String(data, start, next-2-start);
 		    start  = next;
 		}
 
@@ -906,7 +899,7 @@ public class Codecs
 	    }
 	    else					// It's simple data
 	    {
-		value = new String(data, 0, start, end-start);
+		value = new String(data, start, end-start);
 	    }
 
 	    if (idx >= res.length)
@@ -1039,10 +1032,13 @@ public class Codecs
 	       cont_disp = new byte[40],
 	       filename  = new byte[13];
 
-        ContDisp.getBytes(0, ContDisp.length(), cont_disp, 0);
-	FileName.getBytes(0, FileName.length(), filename, 0);
-	Boundary.getBytes(0, Boundary.length(), boundary, 0);
-
+//        ContDisp.getBytes(0, ContDisp.length(), cont_disp, 0);
+	Util.getBytes(ContDisp,cont_disp,0);
+  //      FileName.getBytes(0, FileName.length(), filename, 0);
+	Util.getBytes(FileName,filename,0);
+  //	Boundary.getBytes(0, Boundary.length(), boundary, 0);
+	Util.getBytes(Boundary,boundary,0);
+  
 	if (opts == null)   opts  = dummy;
 	if (files == null)  files = dummy;
 
@@ -1102,7 +1098,8 @@ public class Codecs
 		pos += cont_disp.length;
 
 		int nlen = opts[idx].getName().length();
-		opts[idx].getName().getBytes(0, nlen, res, pos);
+//		opts[idx].getName().getBytes(0, nlen, res, pos);
+                Util.getBytes(opts[idx].getName(),nlen,res,pos);
 		if (nlen >= boundary.length  &&
 		    Util.findStr(boundary, bnd_cmp, res, pos, pos+nlen) != -1)
 		    continue NewBound;
@@ -1115,7 +1112,8 @@ public class Codecs
 		res[pos++] = (byte) '\n';
 
 		int vlen = opts[idx].getValue().length();
-		opts[idx].getValue().getBytes(0, vlen, res, pos);
+//		opts[idx].getValue().getBytes(0, vlen, res, pos);
+                Util.getBytes(opts[idx].getValue(),vlen,res,pos);
 		if (vlen >= boundary.length  &&
 		    Util.findStr(boundary, bnd_cmp, res, pos, pos+vlen) != -1)
 		    continue NewBound;
@@ -1137,8 +1135,9 @@ public class Codecs
 		pos += cont_disp.length;
 
 		int nlen = files[idx].getName().length();
-		files[idx].getName().getBytes(0, nlen, res, pos);
-		if (nlen >= boundary.length  &&
+		//files[idx].getName().getBytes(0, nlen, res, pos);
+		Util.getBytes(files[idx].getName(),res,pos);
+                if (nlen >= boundary.length  &&
 		    Util.findStr(boundary, bnd_cmp, res, pos, pos+nlen) != -1)
 		    continue NewBound;
 		pos += nlen;
@@ -1147,7 +1146,8 @@ public class Codecs
 		pos += filename.length;
 
 		nlen = fname.length();
-		fname.getBytes(0, nlen, res, pos);
+		//fname.getBytes(0, nlen, res, pos);
+		Util.getBytes(fname,res,pos);
 		if (nlen >= boundary.length  &&
 		    Util.findStr(boundary, bnd_cmp, res, pos, pos+nlen) != -1)
 		    continue NewBound;
@@ -1187,7 +1187,7 @@ public class Codecs
 
 	cont_type[0] = new NVPair("Content-Type",
 				  "multipart/form-data; boundary=" +
-				  new String(boundary, 0, 4, 70));
+				  new String(boundary, 4, 70));
 
 	return res;
     }
@@ -1337,7 +1337,8 @@ public class Codecs
 
 	if (len > 0)
 	{
-	    hex_len.getBytes(0, hex_len.length(), res, r_off);
+//	    hex_len.getBytes(0, hex_len.length(), res, r_off);
+            Util.getBytes(hex_len,res,r_off);
 	    r_off += hex_len.length();
 	    res[r_off++] = (byte) '\r';
 	    res[r_off++] = (byte) '\n';
@@ -1356,15 +1357,17 @@ public class Codecs
 
 	    for (int idx=0; idx<ftrs.length; idx++)
 	    {
-		ftrs[idx].getName().getBytes(0, ftrs[idx].getName().length(),
-					     res, r_off);
+		//ftrs[idx].getName().getBytes(0, ftrs[idx].getName().length(),
+		//			     res, r_off);
+                Util.getBytes(ftrs[idx].getName(),res,r_off);
 		r_off += ftrs[idx].getName().length();
 
 		res[r_off++] = (byte) ':';
 		res[r_off++] = (byte) ' ';
 
-		ftrs[idx].getValue().getBytes(0, ftrs[idx].getValue().length(),
-					      res, r_off);
+		//ftrs[idx].getValue().getBytes(0, ftrs[idx].getValue().length(),
+		//			      res, r_off);
+                Util.getBytes(ftrs[idx].getValue(),res,r_off);
 		r_off += ftrs[idx].getValue().length();
 
 		res[r_off++] = (byte) '\r';
@@ -1473,17 +1476,17 @@ public class Codecs
 
 	if (ch != '\n'  &&  (ch != '\r'  ||  input.read() != '\n'))
 	    throw new ParseException("Didn't find valid chunk length: " +
-				     new String(hex_len, 0, 0, off));
+				     new String(hex_len, 0, off));
 
 	// parse chunk length
 
 	int len;
 	try
-	    { len = Integer.parseInt(new String(hex_len, 0, 0, off).trim(),
+	    { len = Integer.parseInt(new String(hex_len, 0, off).trim(),
 				     16); }
 	catch (NumberFormatException nfe)
 	    { throw new ParseException("Didn't find valid chunk length: " +
-					new String(hex_len, 0, 0, off) ); }
+					new String(hex_len, 0, off) ); }
 
 	return len;
     }

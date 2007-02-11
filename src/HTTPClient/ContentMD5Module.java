@@ -155,8 +155,7 @@ class VerifyMD5 implements HashVerifier, GlobalConstants
 	if (hdr == null)  return;
 
 	hdr = hdr.trim();
-	byte[] ContMD5 = new byte[hdr.length()];
-	hdr.getBytes(0, ContMD5.length, ContMD5, 0);
+	byte[] ContMD5 = hdr.getBytes();
 	ContMD5 = Codecs.base64Decode(ContMD5);
 
 	for (int idx=0; idx<hash.length; idx++)

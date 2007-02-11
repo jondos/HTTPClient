@@ -34,6 +34,9 @@
  *
  *
  * $Log$
+ * Revision 1.2  2007-02-10 14:46:21  sk13
+ * no message
+ *
  * Revision 1.6  1998/09/22 18:34:00  ronald
  * Made MD5State a private inner class
  *
@@ -351,8 +354,7 @@ class MD5 {
   public void Update (String s) {
     byte	chars[];
 
-    chars = new byte[s.length()];
-    s.getBytes(0, s.length(), chars, 0);
+    chars = s.getBytes();
 
     Update(chars, chars.length);
   }

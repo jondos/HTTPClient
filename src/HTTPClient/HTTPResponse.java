@@ -320,7 +320,7 @@ public class HTTPResponse implements GlobalConstants, HTTPClientModuleConstants
 	Date   date;
 
 	try
-	    { date = new Date(raw_date); }
+	    { date = Util.parseDate(raw_date); }
 	catch (IllegalArgumentException iae)
 	{
 	    // some servers erroneously send a number, so let's try that
@@ -410,7 +410,7 @@ public class HTTPResponse implements GlobalConstants, HTTPClientModuleConstants
 	Date   date;
 
 	try
-	    { date = new Date(raw_date); }
+	    { date = Util.parseDate(raw_date); }
 	catch (IllegalArgumentException iae)
 	{
 	    // some servers erroneously send a number, so let's try that

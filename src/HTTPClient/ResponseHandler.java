@@ -98,8 +98,7 @@ final class ResponseHandler implements GlobalConstants
 	String endstr = "--" + Util.getParameter("boundary",
 			    resp.getHeader("Content-Type")) +
 			"--\r\n";
-	byte[] endbndry = new byte[endstr.length()];
-	endstr.getBytes(0, endbndry.length, endbndry, 0);
+	byte[] endbndry = endstr.getBytes();
 	int[] end_cmp = Util.compile_search(endbndry);
 	MasterStream.setTerminator(endbndry, end_cmp);
 	set_terminator = true;
