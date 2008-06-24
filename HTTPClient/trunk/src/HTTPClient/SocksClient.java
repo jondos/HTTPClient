@@ -51,7 +51,7 @@ import java.net.*;
  *
  * @version	0.3  30/01/1998
  * @author	Ronald Tschal&auml;r
- * @author      modified by Stefan Köpsell, 04/11/24
+ * @author      modified by Stefan K&ouml;psell, 04/11/24
  */
 
 public class SocksClient implements GlobalConstants
@@ -91,7 +91,7 @@ public class SocksClient implements GlobalConstants
      *
      * @param host  the host the SOCKS server is sitting on.
      * @param port  the port the SOCKS server is listening on.
-     * @author      modified by Stefan Köpsell, 04/11/24
+     * @author      modified by Stefan K&ouml;psell, 04/11/24
      */
     public SocksClient(String host, int port)
     {
@@ -132,7 +132,7 @@ public class SocksClient implements GlobalConstants
      * @param port  the port you wish to connect to
      * @return a Socket with a connection via socks to the desired host/port
      * @exception IOException if any socket operation fails
-     * @author      modified by Stefan Köpsell, 04/11/24
+     * @author      modified by Stefan K&ouml;psell, 04/11/24
      */
     public Socket getSocket(String host, int port)  throws IOException
     {

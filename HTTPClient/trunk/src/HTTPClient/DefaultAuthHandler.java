@@ -44,7 +44,7 @@ import java.util.StringTokenizer;
  *
  * @version	0.4  12/05/1998
  * @author	Ronald Tschal&auml;r
- * @author      modified by Stefan Köpsell, 04/11/24
+ * @author      modified by Stefan K&ouml;psell, 04/11/24
  * @author modified by Stefan Lieske, 2005/02/13
  * @since	V0.2
  */
@@ -199,10 +199,10 @@ public class DefaultAuthHandler implements AuthorizationHandler, GlobalConstants
 
 
 	// Ask the user for username/password
-        /** @author modified by Stefan Köpsell, 04/11/24 */
+        /** @author modified by Stefan K&ouml;psell, 04/11/24 */
 	if (!req.allowUI()||prompter==null)
 	    return null;
-        /** @author modified by Stefan Köpsell, 04/11/24 */
+        /** @author modified by Stefan K&ouml;psell, 04/11/24 */
 	//if (prompter == null)
 	//    setDefaultPrompter();
 

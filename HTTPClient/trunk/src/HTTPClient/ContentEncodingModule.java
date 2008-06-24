@@ -43,12 +43,12 @@ import java.util.zip.GZIPInputStream;
  *
  * @version	0.3  30/01/1998
  * @author	Ronald Tschal&auml;r
- * @author      modified by Stefan Köpsell, 04/11/24
+ * @author      modified by Stefan K&ouml;psell, 04/11/24
  */
 
 class ContentEncodingModule implements HTTPClientModule, GlobalConstants
 {
-  /** @author modified by Stefan Köpsell, 04/11/24*/
+  /** @author modified by Stefan K&ouml;psell, 04/11/24*/
    /* static
     {
 	// This ensures that the loading of this class is only successful
@@ -56,7 +56,7 @@ class ContentEncodingModule implements HTTPClientModule, GlobalConstants
 	 //
 	new InflaterInputStream(null);
     }*/
-   /** @author modified by Stefan Köpsell, 04/11/24 */
+   /** @author modified by Stefan K&ouml;psell, 04/11/24 */
 
     // Constructors
 

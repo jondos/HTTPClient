@@ -58,7 +58,7 @@ import java.util.Enumeration;
  * @see <a href="ftp://ds.internic.net/internet-drafts/draft-ietf-http-state-man-mec-10.txt">HTTP State Management Mechanism spec</a>
  * @version	0.3  30/01/1998
  * @author	Ronald Tschal&auml;r
- * @author      modified by Stefan Köpsell, 04/11/24
+ * @author      modified by Stefan K&ouml;psell, 04/11/24
  * @since	V0.3
  */
 
@@ -115,7 +115,7 @@ public class CookieModule implements HTTPClientModule, GlobalConstants
 		if (cookie.hasExpired())
 		{
 		    if (remove_list == null)  remove_list = new Vector();
-		    remove_list.addElement(cookie); /** @author modified by Stefan Köpsell, 04/11/24 */
+		    remove_list.addElement(cookie); /** @author modified by Stefan K&ouml;psell, 04/11/24 */
 		    continue;
 		}
 

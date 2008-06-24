@@ -1,0 +1,59 @@
+README.CHANGED
+-------
+This file lists the changes that were done to the original HTTPClient library
+by Stefan Köpsell, 04/11/24. This sourcecode will be provided for at least 
+three years from the date of these changes. For further details, please refer 
+to the named class files and to the original code.
+
+
+Changed class files 04/11/24:
+-----------------------------
+HTTPClient.ContentEncodingModule.java
+HTTPClient.CookieModule.java
+HTTPClient.DefaultAuthHandler.java
+HTTPClient.HTTPResponse.java
+HTTPClient.SocksClient.java
+HTTPClient.TransferEncodingModule.java
+
+
+
+This file lists the changes that were done to the original HTTPClient library
+by Stefan Lieske, 04/11/24. This sourcecode will be provided for at least 
+three years from the date of these changes. For further details, please refer 
+to the named class files and to the original code.
+
+Changed class files 05/02/16:
+-----------------------------
+HTTPClient.AuthorizationInfo.java
+HTTPClient.CIHashtable.java
+HTTPClient.CookieModule.java
+HTTPClient.DefaultAuthHandler.java
+HTTPClient.ExtBufferedInputStream.java
+HTTPClient.HTTPConnection.java
+HTTPClient.HttpURLConnection.java
+HTTPClient.NVPair.java
+HTTPClient.ResponseHandler.java
+HTTPClient.StreamDemultiplexor.java
+HTTPClient.Util.java
+
+
+
+This file lists the changes that were done to the original HTTPClient library
+by Rolf Wendolsky. This sourcecode will be provided for at least 
+three years from the date of these changes. For further details, please refer 
+to the named class files and to the original code.
+
+Changed class files 06/05/04:
+-----------------------------
+HTTPClient.HTTPConnection.java
+HTTPClient.EstablishConnection.java
+HTTPClient.ForbiddenIOException.java
+
+Changed class files 06/05/31:
+-----------------------------
+HTTPClient.RetryModule
+
+Changed class files 06/06/17:
+-----------------------------
+HTTPClient.HTTPConnection
+HTTPClient.ThreadInterruptedIOException

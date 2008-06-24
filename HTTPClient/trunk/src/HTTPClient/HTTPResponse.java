@@ -48,7 +48,7 @@ import java.util.Enumeration;
  *
  * @version	0.3  30/01/1998
  * @author	Ronald Tschal&auml;r
- * @author      modified by Stefan Köpsell, 04/11/24
+ * @author      modified by Stefan K&ouml;psell, 04/11/24
  * @since	0.3
  */
 
@@ -505,7 +505,7 @@ public class HTTPResponse implements GlobalConstants, HTTPClientModuleConstants
      * @exception ModuleException if any module encounters an exception.
      * @exception ParseException if an error occured trying to parse the
      *                           content-type header field
-     * @author created by Stefan Köpsell, 04/11/24
+     * @author created by Stefan K&ouml;psell, 04/11/24
      */
     public synchronized String getText()
 	throws IOException, ModuleException, ParseException
