@@ -191,7 +191,7 @@ import java.util.Hashtable;
 public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstants
 {
 	/** The current version of this package. */
-	public final static String version = "RPT-HTTPClient/0.4-dev";
+	public final static String version = "RPT-HTTPClient/0.4.1-dev";
 
 	/** The default context */
 	private final static Object dflt_context = new Object();
