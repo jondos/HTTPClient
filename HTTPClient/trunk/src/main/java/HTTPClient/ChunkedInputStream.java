@@ -100,7 +100,7 @@ class ChunkedInputStream extends FilterInputStream
 	{
 	    // discard
 	    Request dummy =
-		    new Request(null, null, null, null, null, null, false);
+		    new Request(null, null, null, null, null, null);
 	    new Response(dummy, null).readTrailers(in);
 
 	    eof = true;

@@ -292,50 +292,5 @@ class IdempotentSequence
     }
 
 
-    /**
-     * Test code.
-     */
-    public static void main(String args[])
-    {
-	IdempotentSequence seq = new IdempotentSequence();
-
-	seq.add(new Request(null, "GET", "/b1", null, null, null, false));
-	seq.add(new Request(null, "PUT", "/b2", null, null, null, false));
-	seq.add(new Request(null, "GET", "/b1", null, null, null, false));
-	seq.add(new Request(null, "PUT", "/b3", null, null, null, false));
-	seq.add(new Request(null, "GET", "/b2", null, null, null, false));
-	seq.add(new Request(null, "PUT", "/b3", null, null, null, false));
-	seq.add(new Request(null, "GET", "/b1", null, null, null, false));
-	seq.add(new Request(null, "TRACE", "/b4", null, null, null, false));
-	seq.add(new Request(null, "LINK", "/b4", null, null, null, false));
-	seq.add(new Request(null, "GET", "/b4", null, null, null, false));
-	seq.add(new Request(null, "PUT", "/b5", null, null, null, false));
-	seq.add(new Request(null, "HEAD", "/b5", null, null, null, false));
-	seq.add(new Request(null, "PUT", "/b5", null, null, null, false));
-	seq.add(new Request(null, "GET", "/b6", null, null, null, false));
-	seq.add(new Request(null, "DELETE", "/b6", null, null, null, false));
-	seq.add(new Request(null, "HEAD", "/b6", null, null, null, false));
-	seq.add(new Request(null, "OPTIONS", "/b7", null, null, null, false));
-	seq.add(new Request(null, "TRACE", "/b7", null, null, null, false));
-	seq.add(new Request(null, "GET", "/b7", null, null, null, false));
-	seq.add(new Request(null, "PUT", "/b7", null, null, null, false));
-
-	if (!seq.isIdempotent(new Request(null, null, "/b1", null, null, null, false)))
-	    System.err.println("Sequence b1 failed");
-	if (!seq.isIdempotent(new Request(null, null, "/b2", null, null, null, false)))
-	    System.err.println("Sequence b2 failed");
-	if (!seq.isIdempotent(new Request(null, null, "/b3", null, null, null, false)))
-	    System.err.println("Sequence b3 failed");
-	if (seq.isIdempotent(new Request(null, null, "/b4", null, null, null, false)))
-	    System.err.println("Sequence b4 failed");
-	if (!seq.isIdempotent(new Request(null, null, "/b5", null, null, null, false)))
-	    System.err.println("Sequence b5 failed");
-	if (seq.isIdempotent(new Request(null, null, "/b6", null, null, null, false)))
-	    System.err.println("Sequence b6 failed");
-	if (seq.isIdempotent(new Request(null, null, "/b7", null, null, null, false)))
-	    System.err.println("Sequence b7 failed");
-
-	System.out.println("Tests finished");
-    }
-}
+ }
 
