@@ -31,9 +31,6 @@ package HTTPClient;
 
 import java.io.InputStream;
 import java.io.IOException;
-import java.io.InterruptedIOException;
-import java.io.EOFException;
-import java.net.ProtocolException;
 import java.util.Date;
 
 

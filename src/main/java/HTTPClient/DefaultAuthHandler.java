@@ -30,10 +30,7 @@
 package HTTPClient;
 
 import java.io.IOException;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.Vector;
 import java.util.StringTokenizer;
 
@@ -200,7 +197,7 @@ public class DefaultAuthHandler implements AuthorizationHandler, GlobalConstants
 
 	// Ask the user for username/password
         /** @author modified by Stefan K&ouml;psell, 04/11/24 */
-	if (!req.allowUI()||prompter==null)
+	if (prompter==null)
 	    return null;
         /** @author modified by Stefan K&ouml;psell, 04/11/24 */
 	//if (prompter == null)

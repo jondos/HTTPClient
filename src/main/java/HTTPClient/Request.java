@@ -58,9 +58,6 @@ public final class Request implements RoRequest, Cloneable
     /** or an output stream on which the entity will be written */
     private HttpOutputStream stream;
 
-    /** are modules allowed to popup windows or otherwise prompt user? */
-    private boolean        allow_ui;
-
     /** number of millisecs to wait for an error from the server before sending
 	the entity (used when retrying requests) */
             long           delay_entity = 0;
@@ -101,7 +98,6 @@ public final class Request implements RoRequest, Cloneable
 	this.headers    = headers;
 	this.data       = data;
 	this.stream     = stream;
-	this.allow_ui   = allow_ui;
     }
 
 
@@ -208,26 +204,6 @@ public final class Request implements RoRequest, Cloneable
 	this.stream = stream;
     }
 
-
-    /**
-     * @return true if the modules or handlers for this request may popup
-     *         windows or otherwise interact with the user
-     */
-    public boolean allowUI()
-    {
-	return allow_ui;
-    }
-
-    /**
-     * @param allow_ui are modules and handlers allowed to popup windows or
-     *                otherwise interact with the user?
-     */
-    public void setAllowUI(boolean allow_ui)
-    {
-	this.allow_ui = allow_ui;
-    }
-
-
     /**
      * @return a clone of this request object
      */
@@ -259,7 +235,6 @@ public final class Request implements RoRequest, Cloneable
 	this.headers             = other.headers;
 	this.data                = other.data;
 	this.stream              = other.stream;
-	this.allow_ui            = other.allow_ui;
 	this.delay_entity        = other.delay_entity;
 	this.num_retries         = other.num_retries;
 	this.dont_pipeline       = other.dont_pipeline;
