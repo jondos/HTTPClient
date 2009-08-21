@@ -550,7 +550,7 @@ class DefaultCookiePolicyHandler implements CookiePolicyHandler
 
 	// Ok, not in any list, so ask the user (if allowed).
 
-	if (!req.allowUI()||prompter==null)
+	if (prompter==null)
             return true;
 	return prompter.accept(cookie, this, server);
     }

@@ -726,7 +726,6 @@ public class HttpURLConnection extends java.net.HttpURLConnection
 
 	synchronized(con)
 	{
-	    con.setAllowUserInteraction(allowUserInteraction);
 	    if (do_redir)
 		con.addModule(redir_mod, 2);
 	    else
