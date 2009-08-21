@@ -86,11 +86,9 @@ public final class Request implements RoRequest, Cloneable
      * @param headers  the request headers
      * @param data     the entity as a byte[]
      * @param stream   the entity as a stream
-     * @param allow_ui allow user interaction
      */
     public Request(HTTPConnection con, String method, String req_uri,
-		   NVPair[] headers, byte[] data, HttpOutputStream stream,
-		   boolean allow_ui)
+		   NVPair[] headers, byte[] data, HttpOutputStream stream)
     {
 	this.connection = con;
 	this.method     = method;

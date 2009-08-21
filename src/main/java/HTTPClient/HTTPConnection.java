@@ -38,7 +38,6 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Vector;
-import java.util.Hashtable;
 
 /**
  * This class implements http protocol requests; it contains most of HTTP/1.1
@@ -298,12 +297,6 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 
 	/** The list of modules (as a Vector of Class objects) */
 	private Vector ModuleList;
-
-	/** controls whether modules are allowed to interact with user */
-	private static boolean DefaultAllowUI = true;
-
-	/** controls whether modules are allowed to interact with user */
-	private boolean AllowUI;
 
 	static
 	{
@@ -658,7 +651,6 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 		Tunnel_Port = Default_Tunnel_Port;
 		Timeout = DefaultTimeout;
 		ModuleList = (Vector) DefaultModuleList.clone();
-		AllowUI = DefaultAllowUI;
 	}
 
 /**
@@ -1771,48 +1763,6 @@ return true;
 	}
 
 /**
-	 * Controls whether modules are allowed to prompt the user or pop up
-	 * dialogs if neccessary.
-	 *
-	 * @param allow if true allows modules to interact with user.
-	 */
-	public void setAllowUserInteraction(boolean allow)
-	{
-		AllowUI = allow;
-	}
-
-/**
-	 * returns whether modules are allowed to prompt or popup dialogs
-	 * if neccessary.
-	 *
-	 * @return true if modules are allowed to interact with user.
-	 */
-	public boolean getAllowUserInteraction()
-	{
-		return AllowUI;
-	}
-
-/**
-	 * Sets the default allow-user-action.
-	 *
-	 * @param allow if true allows modules to interact with user.
-	 */
-	public static void setDefaultAllowUserInteraction(boolean allow)
-	{
-		DefaultAllowUI = allow;
-	}
-
-/**
-	 * Gets the default allow-user-action.
-	 *
-	 * @return true if modules are allowed to interact with user.
-	 */
-	public static boolean getDefaultAllowUserInteraction()
-	{
-		return DefaultAllowUI;
-	}
-
-/**
 	 * Returns the default list of modules.
 	 *
 	 * @return an array of classes
@@ -2635,8 +2585,7 @@ throw re;
 		ModuleException
 	{
 		Request req = new Request(this, method, resource,
-								  mergedHeaders(headers), entity, stream,
-								  AllowUI);
+								  mergedHeaders(headers), entity, stream);
 		RequestList.addToEnd(req);
 
 		try
@@ -3481,7 +3430,7 @@ switch (sts)
 		NVPair[] h = new NVPair[hdrs.size()];
 		hdrs.copyInto(h);
 		Request connect = new Request(this, "CONNECT", Host + ":" + Port, h,
-null, null, req.allowUI());
+null, null);
 		connect.internal_subrequest = true;
 
 		ExtByteArrayOutputStream hdr_buf = new ExtByteArrayOutputStream(600);
