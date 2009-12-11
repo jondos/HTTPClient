@@ -1248,21 +1248,19 @@ public final class Response implements RoResponse, GlobalConstants, Cloneable
 		beg = end;
 	    }
 
-
 	    // special case Content-length
-
 	    if (hdr_name.equalsIgnoreCase("Content-length"))
 	    {
 		try
 		{
-		    ContentLength = Integer.parseInt(hdr_value);
+		    ContentLength = Integer.parseInt(hdr_value.trim());
 		    if (ContentLength < 0)
 			throw new NumberFormatException();
 		}
 		catch (NumberFormatException nfe)
 		{
 		    throw new ProtocolException("Invalid Content-length header"+
-						" received: "+hdr_value);
+						" received: '"+hdr_value + "'");
 		}
 		list.put(hdr_name, hdr_value);
 	    }
