@@ -4,7 +4,7 @@
 	<groupId>anon</groupId>
 	<artifactId>HTTPClient</artifactId>
 	<packaging>jar</packaging>
-	<version>00.04.004-SNAPSHOT</version>
+	<version>00.04.005</version>
 	<name>HTTPClient</name>
 	<description></description>
 	<url></url>
