@@ -849,7 +849,6 @@ public class AuthorizationInfo implements GlobalConstants, Cloneable
 	int    beg = 0,
 	       end = 0;
 	char[] buf = challenge.toCharArray();
-	char   ch;
 	int    len = buf.length;
 
 	AuthorizationInfo auth_arr[] = new AuthorizationInfo[0],
@@ -861,7 +860,7 @@ public class AuthorizationInfo implements GlobalConstants, Cloneable
 	{
 	    // get scheme
 	    beg = Util.skipSpace(buf, beg);
-	    if (beg == len)  break;
+	    if (beg >= len)  break;
 
 	    end = Util.findSpace(buf, beg+1);
 
@@ -874,7 +873,7 @@ public class AuthorizationInfo implements GlobalConstants, Cloneable
 	    while (true)
 	    {
 		beg = Util.skipSpace(buf, end);
-		if (beg == len)  break;
+		if (beg >= len)  break;
 
 		if (!first)				// expect ","
 		{
@@ -885,7 +884,7 @@ public class AuthorizationInfo implements GlobalConstants, Cloneable
 						    beg);
 
 		    beg = Util.skipSpace(buf, beg+1);	// find param name
-		    if (beg == len)  break;
+		    if (beg >= len)  break;
 		    if (buf[beg] == ',')	// skip empty params
 		    {
 			end = beg;
@@ -926,7 +925,7 @@ public class AuthorizationInfo implements GlobalConstants, Cloneable
 		if (buf[beg] == '=')		// we have a value
 		{
 		    beg = Util.skipSpace(buf, beg+1);
-		    if (beg == len)
+		    if (beg >= len)
 			throw new ProtocolException("Bad Authentication header "
 						    + "format: " + challenge +
 						    "\nUnexpected EOL after token" +
