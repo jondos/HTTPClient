@@ -85,10 +85,10 @@ public class Cookie2 extends Cookie
      *                                 is null
      */
     public Cookie2(String name, String value, String domain, int[] port_list,
-		   String path, Date expires, boolean discard, boolean secure,
+		   String path, Date expires, boolean discard, boolean secure, boolean httponly,
 		   String comment, URL comment_url)
     {
-	super(name, value, domain, path, expires, secure);
+	super(name, value, domain, path, expires, secure, httponly);
 
 	this.discard     = discard;
 	this.port_list   = port_list;
