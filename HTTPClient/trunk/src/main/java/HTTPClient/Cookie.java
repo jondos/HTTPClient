@@ -53,6 +53,7 @@ public class Cookie implements java.io.Serializable
     protected String  domain;
     protected String  path;
     protected boolean secure;
+    protected boolean httponly;
 
 
     /**
@@ -70,7 +71,7 @@ public class Cookie implements java.io.Serializable
      *                                 is null
      */
     public Cookie(String name, String value, String domain, String path,
-		  Date expires, boolean secure)
+		  Date expires, boolean secure, boolean httponly)
     {
 	if (name == null)   throw new NullPointerException("missing name");
 	if (value == null)  throw new NullPointerException("missing value");
@@ -83,6 +84,7 @@ public class Cookie implements java.io.Serializable
 	this.path    = path;
 	this.expires = expires;
 	this.secure  = secure;
+	this.httponly = httponly;
 
 	if (this.domain.indexOf('.') == -1)  this.domain += ".local";
     }
@@ -173,14 +175,34 @@ public class Cookie implements java.io.Serializable
 
 		    continue;
 		}
+		
+		if (set_cookie.regionMatches(true, beg, "HttpOnly", 0, 8))
+		{
+		    curr.httponly = true;
+		    beg += 8;
+
+		    beg = Util.skipSpace(buf, beg);
+		    if (beg < len  &&  buf[beg] == ';')	// consume ";"
+			beg = Util.skipSpace(buf, beg+1);
+		    else if (beg < len  &&  buf[beg] != ',')
+			throw new ProtocolException("Bad Set-Cookie header: " +
+						    set_cookie + "\nExpected " +
+						    "';' or ',' at position " +
+						    beg);
+
+		    continue;
+		}
 
 		// alright, must now be of the form x=y
 		end = set_cookie.indexOf('=', beg);
 		if (end == -1)
-		    throw new ProtocolException("Bad Set-Cookie header: " +
-						set_cookie + "\nNo '=' found " +
-						"for token starting at " +
-						"position " + beg);
+		{
+			throw new ProtocolException("Bad Set-Cookie header: " +
+					set_cookie + "\nNo '=' found " +
+					"for token starting at " +
+					"position " + beg);
+		}
+		    
 
 		String name = set_cookie.substring(beg, end).trim();
 		beg = Util.skipSpace(buf, end+1);
@@ -360,6 +382,10 @@ public class Cookie implements java.io.Serializable
 	return secure;
     }
 
+    public boolean isHttpOnly()
+    {
+    	return httponly;
+    }
 
     /**
      * @return true if this cookie has expired
