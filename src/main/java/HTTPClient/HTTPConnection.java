@@ -32,6 +32,7 @@ package HTTPClient;
 import java.io.OutputStream;
 import java.io.IOException;
 import java.io.InterruptedIOException;
+import java.net.ConnectException;
 import java.net.URL;
 import java.net.Socket;
 import java.net.InetAddress;
@@ -3205,7 +3206,9 @@ switch (sts)
 					closeDemux(ioe);
 
 					if (try_count == 0 || ioe instanceof UnknownHostException ||
-						ioe instanceof InterruptedIOException || req.aborted)
+						ioe instanceof InterruptedIOException ||
+						ioe instanceof ConnectException // this is needed for SOCKS!!
+						|| req.aborted)
 					{
 						throw ioe;
 					}
