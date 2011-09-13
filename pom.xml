@@ -4,7 +4,7 @@
 	<groupId>anon</groupId>
 	<artifactId>HTTPClient</artifactId>
 	<packaging>jar</packaging>
-	<version>00.04.009-SNAPSHOT</version>
+	<version>00.04.010-SNAPSHOT</version>
 	<name>HTTPClient</name>
 	<description></description>
 	<url></url>
@@ -68,6 +68,11 @@
 		</profile>
 		<profile>
 			<id>anon-cc-dev-android</id>
+			<activation>
+				<property>
+					<name>env.BUILD_FOR_ANDROID</name>
+				</property>
+			</activation>
 			<distributionManagement>
 				<repository>
 					<id>anon.inf.tu-dresden.de-releases</id>
@@ -86,7 +91,7 @@
 				<dependency>
 					<groupId>android</groupId>
 					<artifactId>android</artifactId>
-					<version>1.5_r3</version>
+					<version>2.2</version>
 					<scope>provided</scope>
 				</dependency>
 			</dependencies>
