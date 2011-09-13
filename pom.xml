@@ -8,6 +8,12 @@
 	<name>HTTPClient</name>
 	<description></description>
 	<url></url>
+	<repositories>
+		<repository>
+			<id>anon.inf.tu-dresden.de</id>
+			<url>http://anon.inf.tu-dresden.de/artifactory/repo</url>
+		</repository>
+	</repositories>
 	<build>
 	</build>
 	<profiles>
