@@ -127,6 +127,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-jar-plugin</artifactId>
+						<version>2.3.2</version>
 						<configuration>
 							<classifier>android</classifier>
 						</configuration>
@@ -134,5 +135,64 @@
 				</plugins>
 			</build>
 		</profile>
-	</profiles>
+		<profile>
+			<id>anon-release-android</id>
+			<distributionManagement>
+				<repository>
+					<id>anon.inf.tu-dresden.de-releases</id>
+					<name>anon.inf.tu-dresden.de-releases</name>
+					<url>https://anon.inf.tu-dresden.de:443/artifactory/artifacts-release
+          </url>
+				</repository>
+				<snapshotRepository>
+					<id>anon.inf.tu-dresden.de-snapshots</id>
+					<name>anon.inf.tu-dresden.de-snapshots</name>
+					<url>https://anon.inf.tu-dresden.de:443/artifactory/artifacts-dev
+          </url>
+				</snapshotRepository>
+			</distributionManagement>
+			<dependencies>
+				<dependency>
+					<groupId>android</groupId>
+					<artifactId>android</artifactId>
+					<version>2.2</version>
+					<scope>provided</scope>
+				</dependency>
+			</dependencies>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<version>2.3.2</version>
+						<configuration>
+							<compilerArguments>
+								<!--
+									Basically we have to remove the default runtime from the
+									classpath We achieve this by specifying an 'empty'
+									bootclasspath But because the bootclasspath commandline value
+									can not really be empty we give some none-existing value here
+								-->
+								<bootclasspath>foo 
+                </bootclasspath>
+							</compilerArguments>
+							<debug>false</debug>
+							<optimize>true</optimize>
+							<target>1.6</target>
+							</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-jar-plugin</artifactId>
+						<version>2.3.2</version>
+						<configuration>
+							<classifier>android</classifier>
+							<archive>
+								<addMavenDescriptor>false</addMavenDescriptor>
+							</archive>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>	</profiles>
 </project>
