@@ -425,19 +425,19 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 
 		// Set up module list
 
-		String modules = "HTTPClient.RetryModule|" +
-			"HTTPClient.CookieModule|" +
-			"HTTPClient.RedirectionModule|" +
-			"HTTPClient.AuthorizationModule|" +
-			"HTTPClient.DefaultModule|" +
-			"HTTPClient.TransferEncodingModule|" +
-			"HTTPClient.ContentMD5Module|" +
-			"HTTPClient.ContentEncodingModule";
+		Class modules[] = {HTTPClient.RetryModule.class,
+				HTTPClient.CookieModule.class,
+			HTTPClient.RedirectionModule.class,
+			HTTPClient.AuthorizationModule.class,
+			HTTPClient.DefaultModule.class,
+			HTTPClient.TransferEncodingModule.class,
+			HTTPClient.ContentMD5Module.class,
+			HTTPClient.ContentEncodingModule.class};
 
 		boolean in_applet = false;
 		try
 		{
-			modules = System.getProperty("HTTPClient.Modules", modules);
+			/*modules =*/ System.getProperty("HTTPClient.Modules", ""/*modules*/);
 		}
 		catch (SecurityException se)
 		{
@@ -445,18 +445,18 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 		}
 
 		DefaultModuleList = new Vector();
-		String[] list = Util.splitProperty(modules);
-		for (int idx = 0; idx < list.length; idx++)
+//		String[] list = Util.splitProperty(modules);
+		for (int idx = 0; idx < modules.length; idx++)
 		{
 			try
 			{
-				DefaultModuleList.addElement(Class.forName(list[idx]));
+				DefaultModuleList.addElement(modules[idx]);
 				if (DebugConn)
 				{
-					Util.logLine("Conn:  added module " + list[idx]);
+					Util.logLine("Conn:  added module " + modules[idx]);
 				}
 			}
-			catch (ClassNotFoundException cnfe)
+			catch (Exception cnfe)
 			{
 				if (!in_applet)
 				{
