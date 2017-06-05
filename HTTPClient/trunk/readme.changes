@@ -1,7 +1,7 @@
 README.CHANGED
 -------
 This file lists the changes that were done to the original HTTPClient library
-by Stefan Köpsell, 04/11/24. This sourcecode will be provided for at least 
+by Stefan KÃ¶psell, 04/11/24. This sourcecode will be provided for at least 
 three years from the date of these changes. For further details, please refer 
 to the named class files and to the original code.
 
@@ -57,3 +57,9 @@ Changed class files 06/06/17:
 -----------------------------
 HTTPClient.HTTPConnection
 HTTPClient.ThreadInterruptedIOException
+
+Changes on 2017/06/05
+---------------------
+Added HTTPClientSocketFactory.java
+changed: EstablishConnection.java
+HTTPConnection.java
