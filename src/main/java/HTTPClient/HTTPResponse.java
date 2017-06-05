@@ -892,7 +892,7 @@ public class HTTPResponse implements GlobalConstants, HTTPClientModuleConstants
 	    }
 	    else
 	    {
-		int inc  = 1000,
+		int inc  = 100000,
 		    rcvd = 0;
 
 		do
