@@ -18,8 +18,9 @@ final class EstablishConnection extends Thread
 		SocksClient Socks_client;
 		boolean close;
 		HTTPClientSocketFactory m_socketFactory=null;
+		IHTTPClientDNSResolver m_dnsResolver=null;
 
-		EstablishConnection(String host, int port, SocksClient socks,HTTPClientSocketFactory socketFactory)
+		EstablishConnection(String host, int port, SocksClient socks,HTTPClientSocketFactory socketFactory,IHTTPClientDNSResolver a_dnsResolver)
 			{
 				super("EstablishConnection (" + host + ":" + port + ")");
 				try
@@ -38,6 +39,7 @@ final class EstablishConnection extends Thread
 				sock = null;
 				close = false;
 				m_socketFactory=socketFactory;
+				m_dnsResolver=a_dnsResolver;
 			}
 
 		public void run()
@@ -51,8 +53,16 @@ final class EstablishConnection extends Thread
 						else
 							{
 								// try all A records
-								InetAddress[] addr_list = InetAddress.getAllByName(actual_host);
-
+								InetAddress[] addr_list=null;
+								if(m_dnsResolver!=null)
+									{
+										addr_list=m_dnsResolver.getAllByName(actual_host);
+									}
+								else
+									{
+										addr_list = InetAddress.getAllByName(actual_host);
+									}
+	
 								for (int idx = 0; idx < addr_list.length; idx++)
 									{
 										try

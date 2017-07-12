@@ -304,7 +304,10 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 		private Vector ModuleList;
 		
 		/*** The socket factory to be used to create sockets.*/
-		private HTTPClientSocketFactory m_socketFactory;
+		private HTTPClientSocketFactory m_socketFactory=null;
+		
+		/*** The DNSResolve to be used to create connected sockets.*/
+		private IHTTPClientDNSResolver m_dnsResolver=null;
 
 		static
 			{
@@ -3474,7 +3477,15 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 						else
 							{
 								// try all A records
-								InetAddress[] addr_list = InetAddress.getAllByName(actual_host);
+								InetAddress[] addr_list=null;
+								if(m_dnsResolver!=null)
+									{
+										addr_list=m_dnsResolver.getAllByName(actual_host);
+									}
+								else
+									{
+										addr_list = InetAddress.getAllByName(actual_host);
+									}
 								for (int idx = 0; idx < addr_list.length; idx++)
 									{
 										try
@@ -3497,7 +3508,7 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 					}
 				else
 					{
-						EstablishConnection con = new EstablishConnection(actual_host, actual_port, Socks_client,m_socketFactory);
+						EstablishConnection con = new EstablishConnection(actual_host, actual_port, Socks_client,m_socketFactory,m_dnsResolver);
 						con.start();
 						try
 							{
@@ -4111,10 +4122,20 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 				return getProtocol() + "://" + getHost() + (getPort() != URI.defaultPort(getProtocol()) ? ":" + getPort() : "");
 			}
 		
-		/** Sets the socket factory to be used to creat the socket during the Connect() call*/
+		/** Sets the socket factory to be used to create the socket during the Connect() call
+		 * @param socketFactory the HTTPClientSocketFactory to sue, if null the Java default socket factory is used.
+		 * */
 		public void setSocketFactory(HTTPClientSocketFactory socketFactory)
 		{
 			m_socketFactory=socketFactory;
 		}
 		
+		/** Sets the DNS resolver used to create the socket during the Connect() call
+		 * @param a_dnsResolver DNSResolver to use, if null the Java default DNS resolver is used
+		 * */
+		public void setDNSResolver(IHTTPClientDNSResolver a_dnsResolver)
+		{
+			m_dnsResolver=a_dnsResolver;
+		}
+
 	}
