@@ -16,7 +16,7 @@ final class EstablishConnection extends Thread
 		IOException exception;
 		Socket sock;
 		SocksClient Socks_client;
-		boolean close;
+		volatile boolean m_bClose;
 		HTTPClientSocketFactory m_socketFactory=null;
 		IHTTPClientDNSResolver m_dnsResolver=null;
 
@@ -37,7 +37,7 @@ final class EstablishConnection extends Thread
 
 				exception = null;
 				sock = null;
-				close = false;
+				m_bClose = false;
 				m_socketFactory=socketFactory;
 				m_dnsResolver=a_dnsResolver;
 			}
@@ -75,7 +75,7 @@ final class EstablishConnection extends Thread
 											}
 										catch (SocketException se)
 											{ // should be NoRouteToHostException
-												if (idx == addr_list.length - 1 || close)
+												if (idx == addr_list.length - 1 || m_bClose)
 													{
 														exception = se;
 														break;
@@ -96,7 +96,7 @@ final class EstablishConnection extends Thread
 						exception = new IOException("UnknownIOExcpetion in EstablishConnection: " + ioe.getMessage());
 					}
 
-				if (close)
+				if (m_bClose)
 					{
 						try
 							{
@@ -121,6 +121,6 @@ final class EstablishConnection extends Thread
 
 		void forget()
 			{
-				close = true;
+				m_bClose = true;
 			}
 	}
