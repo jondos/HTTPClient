@@ -99,7 +99,7 @@ public class RetryAfterModule implements HTTPClientModule, GlobalConstants
 	if (delay > threshold)
 	{
 	    if (DebugMods)
-		Util.logLine("ReAfM: delay exceeds threshold (" + delay +
+		HttpClientUtil.logLine("ReAfM: delay exceeds threshold (" + delay +
 			     " > " + threshold + ") - aborting request");
 
 	    return REQ_RETURN;
@@ -111,7 +111,7 @@ public class RetryAfterModule implements HTTPClientModule, GlobalConstants
 	if (delay >= 0)
 	{
 	    if (DebugMods)
-		Util.logLine("ReAfM: delaying request by " + delay + " sec");
+		HttpClientUtil.logLine("ReAfM: delaying request by " + delay + " sec");
 
 	    try { Thread.sleep(delay * 1000L); }
 	    catch (InterruptedException ie) { }
@@ -172,7 +172,7 @@ public class RetryAfterModule implements HTTPClientModule, GlobalConstants
 	    delay = (int) ((ra.getTime() - date.getTime()) / 1000);
 
 	    if (DebugMods)
-		Util.logLine("ReAfM: delay = " + delay + " sec");
+		HttpClientUtil.logLine("ReAfM: delay = " + delay + " sec");
 	}
     }
 
@@ -192,7 +192,7 @@ public class RetryAfterModule implements HTTPClientModule, GlobalConstants
 	    if (delay > threshold)
 	    {
 		if (DebugMods)
-		    Util.logLine("ReAfM: delay exceeds threshold (" + delay +
+		    HttpClientUtil.logLine("ReAfM: delay exceeds threshold (" + delay +
 				 " > " + threshold + ") - not retrying request");
 
 		return RSP_CONTINUE;
@@ -214,7 +214,7 @@ public class RetryAfterModule implements HTTPClientModule, GlobalConstants
 	    // retry the request
 
 	    if (DebugMods)
-		Util.logLine("ReAfM: handling 503 status - retrying request");
+		HttpClientUtil.logLine("ReAfM: handling 503 status - retrying request");
 
 	    return RSP_REQUEST;
 	}

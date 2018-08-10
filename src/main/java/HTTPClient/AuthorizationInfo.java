@@ -170,7 +170,7 @@ public class AuthorizationInfo implements GlobalConstants, Cloneable
 	this.cookie  = null;
 
 	if (params != null)
-	    auth_params = Util.resizeArray(params, params.length);
+	    auth_params = HttpClientUtil.resizeArray(params, params.length);
 
 	this.extra_info   = info;
     }
@@ -216,7 +216,7 @@ public class AuthorizationInfo implements GlobalConstants, Cloneable
 	this.Realm       = templ.Realm;
 	this.cookie      = templ.cookie;
 	this.auth_params =
-		Util.resizeArray(templ.auth_params, templ.auth_params.length);
+		HttpClientUtil.resizeArray(templ.auth_params, templ.auth_params.length);
 	this.extra_info  = templ.extra_info;
     }
 
@@ -295,7 +295,7 @@ public class AuthorizationInfo implements GlobalConstants, Cloneable
 						String scheme, String realm,
 						Object context)
     {
-	Hashtable AuthList = Util.getList(CntxtList, context);
+	Hashtable AuthList = HttpClientUtil.getList(CntxtList, context);
 
 	AuthorizationInfo auth_info =
 	    new AuthorizationInfo(host.trim(), port, scheme.trim(),
@@ -364,9 +364,9 @@ public class AuthorizationInfo implements GlobalConstants, Cloneable
     {
 	Hashtable AuthList;
 	if (req != null)
-	    AuthList = Util.getList(CntxtList, req.getConnection().getContext());
+	    AuthList = HttpClientUtil.getList(CntxtList, req.getConnection().getContext());
 	else
-	    AuthList = Util.getList(CntxtList, HTTPConnection.getDefaultContext());
+	    AuthList = HttpClientUtil.getList(CntxtList, HTTPConnection.getDefaultContext());
 
 	AuthorizationInfo new_info =
 	    (AuthorizationInfo) AuthList.get(auth_info);
@@ -427,7 +427,7 @@ public class AuthorizationInfo implements GlobalConstants, Cloneable
     public static void addAuthorization(AuthorizationInfo auth_info,
 					Object context)
     {
-	Hashtable AuthList = Util.getList(CntxtList, context);
+	Hashtable AuthList = HttpClientUtil.getList(CntxtList, context);
 
 	// merge path list
 	AuthorizationInfo old_info =
@@ -441,7 +441,7 @@ public class AuthorizationInfo implements GlobalConstants, Cloneable
 		auth_info.paths = old_info.paths;
 	    else
 	    {
-		auth_info.paths = Util.resizeArray(auth_info.paths, al+ol);
+		auth_info.paths = HttpClientUtil.resizeArray(auth_info.paths, al+ol);
 		System.arraycopy(old_info.paths, 0, auth_info.paths, al, ol);
 	    }
 	}
@@ -494,7 +494,7 @@ public class AuthorizationInfo implements GlobalConstants, Cloneable
 	AuthorizationInfo auth =
 	    new AuthorizationInfo(host, port, scheme, realm, cookie);
 	if (params != null  &&  params.length > 0)
-	    auth.auth_params = Util.resizeArray(params, params.length);
+	    auth.auth_params = HttpClientUtil.resizeArray(params, params.length);
 	auth.extra_info = info;
 
 	addAuthorization(auth, context);
@@ -677,7 +677,7 @@ public class AuthorizationInfo implements GlobalConstants, Cloneable
     public static void removeAuthorization(AuthorizationInfo auth_info,
 					   Object context)
     {
-	Hashtable AuthList = Util.getList(CntxtList, context);
+	Hashtable AuthList = HttpClientUtil.getList(CntxtList, context);
 	AuthList.remove(auth_info);
     }
 
@@ -732,7 +732,7 @@ public class AuthorizationInfo implements GlobalConstants, Cloneable
      */
     static AuthorizationInfo findBest(RoRequest req)
     {
-	String path = Util.getPath(req.getRequestURI());
+	String path = HttpClientUtil.getPath(req.getRequestURI());
 	String host = req.getConnection().getHost();
 	int    port = req.getConnection().getPort();
 
@@ -740,7 +740,7 @@ public class AuthorizationInfo implements GlobalConstants, Cloneable
 	// First search for an exact match
 
 	Hashtable AuthList =
-		    Util.getList(CntxtList, req.getConnection().getContext());
+		    HttpClientUtil.getList(CntxtList, req.getConnection().getContext());
 	Enumeration list = AuthList.elements();
 	while (list.hasMoreElements())
 	{
@@ -818,14 +818,14 @@ public class AuthorizationInfo implements GlobalConstants, Cloneable
      */
     synchronized void addPath(String resource)
     {
-	String path = Util.getPath(resource);
+	String path = HttpClientUtil.getPath(resource);
 
 	// First check that we don't already have this one
 	for (int idx=0; idx<paths.length; idx++)
 	    if (paths[idx].equals(path)) return;
 
 	// Ok, add it
-	paths = Util.resizeArray(paths, paths.length+1);
+	paths = HttpClientUtil.resizeArray(paths, paths.length+1);
 	paths[paths.length-1] = path;
     }
 
@@ -859,10 +859,10 @@ public class AuthorizationInfo implements GlobalConstants, Cloneable
 	while (true)			// get all challenges
 	{
 	    // get scheme
-	    beg = Util.skipSpace(buf, beg);
+	    beg = HttpClientUtil.skipSpace(buf, beg);
 	    if (beg >= len)  break;
 
-	    end = Util.findSpace(buf, beg+1);
+	    end = HttpClientUtil.findSpace(buf, beg+1);
 
 	    curr = new AuthorizationInfo(host, port);
 	    curr.Scheme = challenge.substring(beg, end);
@@ -872,7 +872,7 @@ public class AuthorizationInfo implements GlobalConstants, Cloneable
 	    Vector params = new Vector();
 	    while (true)
 	    {
-		beg = Util.skipSpace(buf, end);
+		beg = HttpClientUtil.skipSpace(buf, end);
 		if (beg >= len)  break;
 
 		if (!first)				// expect ","
@@ -883,7 +883,7 @@ public class AuthorizationInfo implements GlobalConstants, Cloneable
 						    "'\nExpected \",\" at position "+
 						    beg);
 
-		    beg = Util.skipSpace(buf, beg+1);	// find param name
+		    beg = HttpClientUtil.skipSpace(buf, beg+1);	// find param name
 		    if (beg >= len)  break;
 		    if (buf[beg] == ',')	// skip empty params
 		    {
@@ -913,7 +913,7 @@ public class AuthorizationInfo implements GlobalConstants, Cloneable
 		String param_name = challenge.substring(beg, end),
 		       param_value;
 
-		beg = Util.skipSpace(buf, end);	// find "=" or ","
+		beg = HttpClientUtil.skipSpace(buf, end);	// find "=" or ","
 
 		if (beg < len  &&  buf[beg] != '='  &&  buf[beg] != ',')
 		{  		// It's not a param, but another challenge
@@ -924,7 +924,7 @@ public class AuthorizationInfo implements GlobalConstants, Cloneable
 
 		if (buf[beg] == '=')		// we have a value
 		{
-		    beg = Util.skipSpace(buf, beg+1);
+		    beg = HttpClientUtil.skipSpace(buf, beg+1);
 		    if (beg >= len)
 			throw new ProtocolException("Bad Authentication header "
 						    + "format: " + challenge +
@@ -932,7 +932,7 @@ public class AuthorizationInfo implements GlobalConstants, Cloneable
 						    " at position " + (end-1));
 		    if (buf[beg] != '"')	// it's a token
 		    {
-			end = Util.skipToken(buf, beg);
+			end = HttpClientUtil.skipToken(buf, beg);
 			if (end == beg)
 			    throw new ProtocolException("Bad Authentication header "
 				+ "format: " + challenge + "\nToken expected at " +
@@ -951,7 +951,7 @@ public class AuthorizationInfo implements GlobalConstants, Cloneable
 				+ "quoted-string starting at position " + beg
 				+ " not found");
 			param_value =
-			    Util.dequoteString(challenge.substring(beg, end));
+			    HttpClientUtil.dequoteString(challenge.substring(beg, end));
 			end++;
 		    }
 		}
@@ -981,7 +981,7 @@ public class AuthorizationInfo implements GlobalConstants, Cloneable
 		 */
 		curr.Realm = "";
 
-	    auth_arr = Util.resizeArray(auth_arr, auth_arr.length+1);
+	    auth_arr = HttpClientUtil.resizeArray(auth_arr, auth_arr.length+1);
 	    auth_arr[auth_arr.length-1] = curr;
 	}
 
@@ -1064,7 +1064,7 @@ public class AuthorizationInfo implements GlobalConstants, Cloneable
      */
     public final NVPair[] getParams()
     {
-	return Util.resizeArray(auth_params, auth_params.length);
+	return HttpClientUtil.resizeArray(auth_params, auth_params.length);
     }
 
 
@@ -1076,7 +1076,7 @@ public class AuthorizationInfo implements GlobalConstants, Cloneable
     public final void setParams(NVPair[] params)
     {
 	if (params != null)
-	    auth_params = Util.resizeArray(params, params.length);
+	    auth_params = HttpClientUtil.resizeArray(params, params.length);
 	else
 	    auth_params = new NVPair[0];
     }
@@ -1126,7 +1126,7 @@ public class AuthorizationInfo implements GlobalConstants, Cloneable
 	    if (Realm.length() > 0)
 	    {
 		field.append("realm=\"");
-		field.append(Util.quoteString(Realm, "\\\""));
+		field.append(HttpClientUtil.quoteString(Realm, "\\\""));
 		field.append('"');
 	    }
 
@@ -1143,7 +1143,7 @@ public class AuthorizationInfo implements GlobalConstants, Cloneable
     if (auth_params[idx].quoteValue()) {
       field.append('"');
 		field.append(
-		    Util.quoteString(auth_params[idx].getValue(), "\\\""));
+		    HttpClientUtil.quoteString(auth_params[idx].getValue(), "\\\""));
 		field.append('"');
 	    }
     else {
@@ -1202,7 +1202,7 @@ public class AuthorizationInfo implements GlobalConstants, Cloneable
 	try
 	{
 	    ai = (AuthorizationInfo) super.clone();
-	    ai.auth_params = Util.resizeArray(auth_params, auth_params.length);
+	    ai.auth_params = HttpClientUtil.resizeArray(auth_params, auth_params.length);
 	    try
 	    {
 		// ai.extra_info  = extra_info.clone();

@@ -59,7 +59,7 @@ import java.util.BitSet;
  * @since	V0.4
  */
 
-public class URI
+public class HttpClientURI
 {
     /* various character classes as defined in the draft */
     protected static BitSet alphanumChar;
@@ -173,9 +173,9 @@ public class URI
      * Constructs a URI from the given string representation. The string
      * must be an absolute URI.
      */
-    public URI(String uri)  throws ParseException
+    public HttpClientURI(String uri)  throws ParseException
     {
-	this((URI) null, uri);
+	this((HttpClientURI) null, uri);
     }
 
 
@@ -183,7 +183,7 @@ public class URI
      * Constructs a URI from the given string representation, relative to
      * the given base URI.
      */
-    public URI(URI base, String rel_uri)  throws ParseException
+    public HttpClientURI(HttpClientURI base, String rel_uri)  throws ParseException
     {
 	/* Parsing is done according to the following RE:
 	 *
@@ -438,7 +438,7 @@ public class URI
      * Constructs a URI from the given parts, using the default port for
      * this scheme (if known).
      */
-    public URI(String scheme, String host, String path)  throws ParseException
+    public HttpClientURI(String scheme, String host, String path)  throws ParseException
     {
 	this(scheme, null, host, -1, path, null, null);
     }
@@ -447,7 +447,7 @@ public class URI
     /**
      * Constructs a URI from the given parts.
      */
-    public URI(String scheme, String host, int port, String path)
+    public HttpClientURI(String scheme, String host, int port, String path)
 	    throws ParseException
     {
 	this(scheme, null, host, port, path, null, null);
@@ -457,7 +457,7 @@ public class URI
     /**
      * Constructs a URI from the given parts.
      */
-    public URI(String scheme, String userinfo, String host, int port,
+    public HttpClientURI(String scheme, String userinfo, String host, int port,
 	       String path, String query, String fragment)
 	    throws ParseException
     {
@@ -478,7 +478,7 @@ public class URI
     /**
      * Constructs an opaque URI from the given parts.
      */
-    public URI(String scheme, String opaque)
+    public HttpClientURI(String scheme, String opaque)
 	    throws ParseException
     {
 	if (scheme == null)
@@ -780,9 +780,9 @@ public class URI
      */
     public boolean equals(Object other)
     {
-	if (other instanceof URI)
+	if (other instanceof HttpClientURI)
 	{
-	    URI o = (URI) other;
+	    HttpClientURI o = (HttpClientURI) other;
 	    return (scheme.equalsIgnoreCase(o.scheme)  &&
 		    (
 		     !is_generic  &&
@@ -959,7 +959,7 @@ public class URI
 	 * draft-fielding-uri-syntax-03
 	 */
 
-	URI base = new URI("http://a/b/c/d;p?q");
+	HttpClientURI base = new HttpClientURI("http://a/b/c/d;p?q");
 
 	// normal examples
 	testParser(base, "g:h",        "g:h");
@@ -1051,23 +1051,23 @@ public class URI
 	System.err.println("*** Tests finished successfuly");
     }
 
-    private static void testParser(URI base, String relURI, String result)
+    private static void testParser(HttpClientURI base, String relURI, String result)
 	    throws Exception
     {
-	if (!(new URI(base, relURI).toString().equals(result)))
+	if (!(new HttpClientURI(base, relURI).toString().equals(result)))
 	{
 	    String nl = System.getProperty("line.separator");
 	    throw new Exception("Test failed: " + nl +
 				"  base-URI = <" + base + ">" + nl +
 				"  rel-URI  = <" + relURI + ">" + nl+
 				"  expected   <" + result + ">" + nl+
-				"  but got    <" + new URI(base, relURI) + ">");
+				"  but got    <" + new HttpClientURI(base, relURI) + ">");
 	}
     }
 
     private static void testEqual(String one, String two)  throws Exception
     {
-	if (!(new URI(one).equals(new URI(two))))
+	if (!(new HttpClientURI(one).equals(new HttpClientURI(two))))
 	{
 	    String nl = System.getProperty("line.separator");
 	    throw new Exception("Test failed: " + nl +
@@ -1077,7 +1077,7 @@ public class URI
 
     private static void testNotEqual(String one, String two)  throws Exception
     {
-	if ((new URI(one).equals(new URI(two))))
+	if ((new HttpClientURI(one).equals(new HttpClientURI(two))))
 	{
 	    String nl = System.getProperty("line.separator");
 	    throw new Exception("Test failed: " + nl +
@@ -1089,7 +1089,7 @@ public class URI
     {
 	boolean got_pe = false;
 	try
-	    { new URI(uri); }
+	    { new HttpClientURI(uri); }
 	catch (ParseException pe)
 	    { got_pe = true; }
 	if (!got_pe)

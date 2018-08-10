@@ -141,7 +141,7 @@ public class SocksClient implements GlobalConstants
 	try
 	{
 	    if (DebugSocks)
-		Util.logLine("Socks: contacting server on " + socks_host + ":" +
+		HttpClientUtil.logLine("Socks: contacting server on " + socks_host + ":" +
 			     socks_port);
 
 
@@ -172,7 +172,7 @@ public class SocksClient implements GlobalConstants
 		    catch (SocksException se)
 		    {
 			if (DebugSocks)
-			    Util.logLine("Socks: V4 request failed: " +
+			    HttpClientUtil.logLine("Socks: V4 request failed: " +
 					 se.getMessage());
 
 			sock.close();
@@ -189,7 +189,7 @@ public class SocksClient implements GlobalConstants
 				    "version "+socks_version);
 	    }
 
-	    if (DebugSocks)  Util.logLine("Socks: connection established.");
+	    if (DebugSocks)  HttpClientUtil.logLine("Socks: connection established.");
 
 	    return sock;
 	}
@@ -247,7 +247,7 @@ public class SocksClient implements GlobalConstants
 	ByteArrayOutputStream buffer = new ByteArrayOutputStream(100);
 
 	if (DebugSocks)
-	    Util.logLine("Socks: Beginning V4 Protocol Exchange for host " +
+	    HttpClientUtil.logLine("Socks: Beginning V4 Protocol Exchange for host " +
 			 host + ":" + port);
 
 	// get ip addr and user name
@@ -263,7 +263,7 @@ public class SocksClient implements GlobalConstants
 	    catch (SecurityException se)
 		{ v4A = true; }
 	    if (DebugSocks)
-		if (v4A)  Util.logLine("Socks: Switching to version 4A");
+		if (v4A)  HttpClientUtil.logLine("Socks: Switching to version 4A");
 	}
 
 	if (user == null)	// I see no reason not to cache this
@@ -282,7 +282,7 @@ public class SocksClient implements GlobalConstants
 	// send version 4 request
 
 	if (DebugSocks)
-	    Util.logLine("Socks: Sending connect request for user " +
+	    HttpClientUtil.logLine("Socks: Sending connect request for user " +
 			 new String(user));
 
 	buffer.reset();
@@ -308,7 +308,7 @@ public class SocksClient implements GlobalConstants
 	    throw new SocksException("Connection refused by server");
 	else if (version == 4)	// not all socks4 servers are correct...
 	    if (DebugSocks)
-		Util.logLine("Socks: Warning: received version 4 instead of 0");
+		HttpClientUtil.logLine("Socks: Warning: received version 4 instead of 0");
 	else if (version != 0)
 	    throw new SocksException("Received invalid version: " + version +
 				     "; expected: 0");
@@ -316,7 +316,7 @@ public class SocksClient implements GlobalConstants
 	int sts = inp.read();
 
 	if (DebugSocks)
-	    Util.logLine("Socks: Received response; version: " + version +
+	    HttpClientUtil.logLine("Socks: Received response; version: " + version +
 			 "; status: " + sts);
 
 	switch (sts)
@@ -359,13 +359,13 @@ public class SocksClient implements GlobalConstants
 	ByteArrayOutputStream buffer = new ByteArrayOutputStream(100);
 
 	if (DebugSocks)
-	    Util.logLine("Socks: Beginning V5 Protocol Exchange for host " +
+	    HttpClientUtil.logLine("Socks: Beginning V5 Protocol Exchange for host " +
 			 host + ":" + port);
 
 	// send version 5 verification methods
 
 	if (DebugSocks)
-	    Util.logLine("Socks: Sending authentication request; methods " +
+	    HttpClientUtil.logLine("Socks: Sending authentication request; methods " +
 			 "No-Authentication, Username/Password");
 
 	buffer.reset();
@@ -389,7 +389,7 @@ public class SocksClient implements GlobalConstants
 	int method = inp.read();
 
 	if (DebugSocks)
-	    Util.logLine("Socks: Received response; version: " + version +
+	    HttpClientUtil.logLine("Socks: Received response; version: " + version +
 			 "; method: " + method);
 
 
@@ -416,7 +416,7 @@ public class SocksClient implements GlobalConstants
 
 	// send version 5 request
 
-	if (DebugSocks)  Util.logLine("Socks: Sending connect request");
+	if (DebugSocks)  HttpClientUtil.logLine("Socks: Sending connect request");
 
 	buffer.reset();
 	buffer.write(5);				// version
@@ -441,7 +441,7 @@ public class SocksClient implements GlobalConstants
 	int sts = inp.read();
 
 	if (DebugSocks)
-	    Util.logLine("Socks: Received response; version: " + version +
+	    HttpClientUtil.logLine("Socks: Received response; version: " + version +
 			 "; status: " + sts);
 
 	switch (sts)
@@ -528,7 +528,7 @@ public class SocksClient implements GlobalConstants
 
 
 	if (DebugSocks)
-	    Util.logLine("Socks: Entering authorization subnegotiation" +
+	    HttpClientUtil.logLine("Socks: Entering authorization subnegotiation" +
 			 "; method: Username/Password");
 
 	// get username/password
@@ -560,17 +560,17 @@ public class SocksClient implements GlobalConstants
 	// send them to server
 
 	if (DebugSocks)
-	    Util.logLine("Socks: Sending authorization request for user " +
+	    HttpClientUtil.logLine("Socks: Sending authorization request for user " +
 			 user_str);
 
 	buffer = new byte[1+1+user_str.length()+1+pass_str.length()];
 	buffer[0] = 1;				// version 1 (subnegotiation)
 	buffer[1] = (byte) user_str.length();		// Username length
 	//user_str.getBytes(0, buffer[1], buffer, 2);	// Username
-	Util.getBytes(user_str,buffer[1],buffer,2);
+	HttpClientUtil.getBytes(user_str,buffer[1],buffer,2);
         buffer[2+buffer[1]] = (byte) pass_str.length();	// Password length
 	//pass_str.getBytes(0, buffer[2+buffer[1]], buffer, 2+buffer[1]+1);// Password
-	Util.getBytes(pass_str,buffer[2+buffer[1]],buffer,2+buffer[1]+1);
+	HttpClientUtil.getBytes(pass_str,buffer[2+buffer[1]],buffer,2+buffer[1]+1);
         out.write(buffer);
 
 
@@ -588,7 +588,7 @@ public class SocksClient implements GlobalConstants
 				     "failed; status: "+sts);
 
 	if (DebugSocks)
-	    Util.logLine("Socks: Received response; version: " + version +
+	    HttpClientUtil.logLine("Socks: Received response; version: " + version +
 			 "; status: " + sts);
     }
 

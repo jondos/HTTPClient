@@ -81,10 +81,10 @@ public class HTTPResponse implements GlobalConstants, HTTPClientModuleConstants
     private String       Version;
 
     /** the original URI used. */
-    private URI          OriginalURI = null;
+    private HttpClientURI          OriginalURI = null;
 
     /** the final URI of the document. */
-    private URI          EffectiveURI = null;
+    private HttpClientURI          EffectiveURI = null;
 
     /** any headers which were received and do not fit in the above list. */
     private CIHashtable  Headers = null;
@@ -131,7 +131,7 @@ public class HTTPResponse implements GlobalConstants, HTTPClientModuleConstants
 	this.timeout = timeout;
 	try
 	{
-	    this.OriginalURI = new URI(orig.getConnection().getProtocol(),
+	    this.OriginalURI = new HttpClientURI(orig.getConnection().getProtocol(),
 				       orig.getConnection().getHost(),
 				       orig.getConnection().getPort(),
 				       orig.getRequestURI());
@@ -319,7 +319,7 @@ public class HTTPResponse implements GlobalConstants, HTTPClientModuleConstants
 	Date   date;
 
 	try
-	    { date = Util.parseDate(raw_date); }
+	    { date = HttpClientUtil.parseDate(raw_date); }
 	catch (IllegalArgumentException iae)
 	{
 	    // some servers erroneously send a number, so let's try that
@@ -409,7 +409,7 @@ public class HTTPResponse implements GlobalConstants, HTTPClientModuleConstants
 	Date   date;
 
 	try
-	    { date = Util.parseDate(raw_date); }
+	    { date = HttpClientUtil.parseDate(raw_date); }
 	catch (IllegalArgumentException iae)
 	{
 	    // some servers erroneously send a number, so let's try that
@@ -475,10 +475,10 @@ public class HTTPResponse implements GlobalConstants, HTTPClientModuleConstants
 	    {
 		if (DebugResp)
 		{
-		    Util.logLine("HResp: (\"" + method + " " +
+		    HttpClientUtil.logLine("HResp: (\"" + method + " " +
 				 OriginalURI.getPath() + "\")");
-		    Util.logMessage("       ");
-		    Util.logStackTrace(ioe);
+		    HttpClientUtil.logMessage("       ");
+		    HttpClientUtil.logStackTrace(ioe);
 		}
 		try { inp_stream.close(); } catch (Exception e) { }
 		throw ioe;
@@ -513,7 +513,7 @@ public class HTTPResponse implements GlobalConstants, HTTPClientModuleConstants
 	if (ct == null  ||  !ct.toLowerCase().startsWith("text/"))
 	    throw new IOException("Content-Type `" + ct + "' is not a text type");
 
-	String charset = Util.getParameter("charset", ct);
+	String charset = HttpClientUtil.getParameter("charset", ct);
 	if (charset == null)
 	    charset = "ISO-8859-1";
 
@@ -604,10 +604,10 @@ public class HTTPResponse implements GlobalConstants, HTTPClientModuleConstants
 	    {
 		if (DebugResp  &&  !(e instanceof InterruptedIOException))
 		{
-		    Util.logLine("HResp: (\"" + method + " " +
+		    HttpClientUtil.logLine("HResp: (\"" + method + " " +
 				 OriginalURI.getPath() + "\")");
-		    Util.logMessage("       ");
-		    Util.logStackTrace(e);
+		    HttpClientUtil.logMessage("       ");
+		    HttpClientUtil.logStackTrace(e);
 		}
 		return "Failed to read headers: " + e;
 	    }
@@ -867,7 +867,7 @@ public class HTTPResponse implements GlobalConstants, HTTPClientModuleConstants
 		getHeader("Transfer-Encoding") == null)
 	    {
 		int rcvd = 0;
-		Data = Util.resizeArray(Data, ContentLength);
+		Data = HttpClientUtil.resizeArray(Data, ContentLength);
 
 		do
 		{
@@ -888,7 +888,7 @@ public class HTTPResponse implements GlobalConstants, HTTPClientModuleConstants
 		}
 		*/
 		if (rcvd == -1)
-		    Data = Util.resizeArray(Data, off);
+		    Data = HttpClientUtil.resizeArray(Data, off);
 	    }
 	    else
 	    {
@@ -898,21 +898,21 @@ public class HTTPResponse implements GlobalConstants, HTTPClientModuleConstants
 		do
 		{
 		    off  += rcvd;
-		    Data  = Util.resizeArray(Data, off+inc);
+		    Data  = HttpClientUtil.resizeArray(Data, off+inc);
 		} while ((rcvd = inp.read(Data, off, inc)) != -1);
 
-		Data = Util.resizeArray(Data, off);
+		Data = HttpClientUtil.resizeArray(Data, off);
 	    }
 	}
 	catch (InterruptedIOException iioe)
 	{
-	    Data = Util.resizeArray(Data, off);
+	    Data = HttpClientUtil.resizeArray(Data, off);
 	    interrupted = true;
 	    throw iioe;
 	}
 	catch (IOException ioe)
 	{
-	    Data = Util.resizeArray(Data, off);
+	    Data = HttpClientUtil.resizeArray(Data, off);
 	    throw ioe;
 	}
 	finally

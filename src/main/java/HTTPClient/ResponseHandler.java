@@ -76,7 +76,7 @@ final class ResponseHandler implements GlobalConstants
 	this.stream   = new RespInputStream(demux, this);
 
 	if (DebugDemux)
-	    Util.logLine("Demux: Opening stream " + this.stream.hashCode() +
+	    HttpClientUtil.logLine("Demux: Opening stream " + this.stream.hashCode() +
 			 " (" + demux.hashCode() + ")");
     }
 
@@ -95,11 +95,11 @@ final class ResponseHandler implements GlobalConstants
     {
 	if (set_terminator)  return;
 
-	String endstr = "--" + Util.getParameter("boundary",
+	String endstr = "--" + HttpClientUtil.getParameter("boundary",
 			    resp.getHeader("Content-Type")) +
 			"--\r\n";
 	byte[] endbndry = endstr.getBytes();
-	int[] end_cmp = Util.compile_search(endbndry);
+	int[] end_cmp = HttpClientUtil.compile_search(endbndry);
 	MasterStream.setTerminator(endbndry, end_cmp);
 	set_terminator = true;
     }

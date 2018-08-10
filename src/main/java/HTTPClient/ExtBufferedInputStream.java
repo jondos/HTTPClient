@@ -159,7 +159,7 @@ final class ExtBufferedInputStream extends DemultiplexorInputStream
 	    }
 	    else		/* grow buffer */
 	    {
-		buf = Util.resizeArray(buf, eod_str.length*2);
+		buf = HttpClientUtil.resizeArray(buf, eod_str.length*2);
 	    }
 	}
 
@@ -172,7 +172,7 @@ final class ExtBufferedInputStream extends DemultiplexorInputStream
 	    int start = pos - eod_str.length;
 	    if (start < 0)  start = 0;
 	    eod_pos =
-		Util.findStr(eod_str, eod_cmp, buf, start, count);
+		HttpClientUtil.findStr(eod_str, eod_cmp, buf, start, count);
 	    if (eod_pos >= 0)  eod_pos += eod_str.length;
 	}
     }
@@ -306,7 +306,7 @@ final class ExtBufferedInputStream extends DemultiplexorInputStream
 
 	if (eod_str != null)
 	{
-	    eod_pos = Util.findStr(eod_str, eod_cmp, buf, pos, count);
+	    eod_pos = HttpClientUtil.findStr(eod_str, eod_cmp, buf, pos, count);
 	    if (eod_pos >= 0)  eod_pos += eod_str.length;
 	}
 	else

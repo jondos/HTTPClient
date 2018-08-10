@@ -108,7 +108,7 @@ public class JunkbusterModule implements HTTPClientModule, GlobalConstants
 	    { bl_file = null; }
 	if (DebugMods)
 	    if (bl_file != null)
-		Util.logLine("JBM:   reading blockfile " + bl_file);
+		HttpClientUtil.logLine("JBM:   reading blockfile " + bl_file);
 	readBlocklist(bl_file);
     }
 
@@ -131,7 +131,7 @@ public class JunkbusterModule implements HTTPClientModule, GlobalConstants
 	    resp[0] =
 		new Response("HTTP/1.1", 403, "Forbidden", ct, msg, null, 0);
 
-	    if (DebugMods) Util.logLine("JBM:   '" + req.getConnection() +
+	    if (DebugMods) HttpClientUtil.logLine("JBM:   '" + req.getConnection() +
 					req.getRequestURI() + "' blocked by " +
 					"rule '" + rule + "'");
 
@@ -144,11 +144,11 @@ public class JunkbusterModule implements HTTPClientModule, GlobalConstants
 	NVPair[] hdrs = req.getHeaders();
 
 	if (remove_from)
-	    hdrs = Util.removeAllValues(hdrs, "From");
+	    hdrs = HttpClientUtil.removeAllValues(hdrs, "From");
 	if (remove_ua)
-	    hdrs = Util.removeAllValues(hdrs, "User-Agent");
+	    hdrs = HttpClientUtil.removeAllValues(hdrs, "User-Agent");
 	if (remove_referer)
-	    hdrs = Util.removeAllValues(hdrs, "Referer");
+	    hdrs = HttpClientUtil.removeAllValues(hdrs, "Referer");
 
 	req.setHeaders(hdrs);
 
@@ -234,7 +234,7 @@ public class JunkbusterModule implements HTTPClientModule, GlobalConstants
     {
 	String host = req.getConnection().getHost();
 	int    port = req.getConnection().getPort();
-	String path = Util.getPath(req.getRequestURI());
+	String path = HttpClientUtil.getPath(req.getRequestURI());
 	boolean blocked = false;
 	String rule = null;
 
@@ -283,11 +283,11 @@ public class JunkbusterModule implements HTTPClientModule, GlobalConstants
 	    {
 		if (pos == bl_hosts.length)
 		{
-		    bl_lines = Util.resizeArray(bl_lines, pos + 100);
-		    bl_hosts = Util.resizeArray(bl_hosts, pos + 100);
-		    bl_ports = Util.resizeArray(bl_ports, pos + 100);
-		    bl_paths = Util.resizeArray(bl_paths, pos + 100);
-		    bl_block = Util.resizeArray(bl_block, pos + 100);
+		    bl_lines = HttpClientUtil.resizeArray(bl_lines, pos + 100);
+		    bl_hosts = HttpClientUtil.resizeArray(bl_hosts, pos + 100);
+		    bl_ports = HttpClientUtil.resizeArray(bl_ports, pos + 100);
+		    bl_paths = HttpClientUtil.resizeArray(bl_paths, pos + 100);
+		    bl_block = HttpClientUtil.resizeArray(bl_block, pos + 100);
 		}
 
 
@@ -352,11 +352,11 @@ public class JunkbusterModule implements HTTPClientModule, GlobalConstants
 		pos++;
 	    }
 
-	    bl_lines = Util.resizeArray(bl_lines, pos);
-	    bl_hosts = Util.resizeArray(bl_hosts, pos);
-	    bl_ports = Util.resizeArray(bl_ports, pos);
-	    bl_paths = Util.resizeArray(bl_paths, pos);
-	    bl_block = Util.resizeArray(bl_block, pos);
+	    bl_lines = HttpClientUtil.resizeArray(bl_lines, pos);
+	    bl_hosts = HttpClientUtil.resizeArray(bl_hosts, pos);
+	    bl_ports = HttpClientUtil.resizeArray(bl_ports, pos);
+	    bl_paths = HttpClientUtil.resizeArray(bl_paths, pos);
+	    bl_block = HttpClientUtil.resizeArray(bl_block, pos);
 	}
 	catch (Exception e)
 	{
@@ -366,7 +366,7 @@ public class JunkbusterModule implements HTTPClientModule, GlobalConstants
 	    bl_paths = new String[0];
 	    bl_block = new boolean[0];
 
-	    if (DebugMods) Util.logLine("JBM:   Error reading `" + bl_file +
+	    if (DebugMods) HttpClientUtil.logLine("JBM:   Error reading `" + bl_file +
 					"': " + e);
 	}
     }

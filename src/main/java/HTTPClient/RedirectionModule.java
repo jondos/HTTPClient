@@ -56,7 +56,7 @@ class RedirectionModule implements HTTPClientModule, GlobalConstants
     private int level;
 
     /** the uri used in the last redirection */
-    private URI lastURI;
+    private HttpClientURI lastURI;
 
     /** used for deferred redirection retries */
     private boolean new_con;
@@ -86,7 +86,7 @@ class RedirectionModule implements HTTPClientModule, GlobalConstants
     public int requestHandler(Request req, Response[] resp)
     {
 	HTTPConnection con = req.getConnection();
-	URI new_loc,
+	HttpClientURI new_loc,
 	    cur_loc;
 	    
 
@@ -110,15 +110,15 @@ class RedirectionModule implements HTTPClientModule, GlobalConstants
 
 	try
 	{
-	    cur_loc = new URI(con.getProtocol(), con.getHost(),
+	    cur_loc = new HttpClientURI(con.getProtocol(), con.getHost(),
 			      con.getPort(), req.getRequestURI());
 	}
 	catch (ParseException pe)
 	    { cur_loc = null; }
 
-	Hashtable perm_redir_list = Util.getList(perm_redir_cntxt_list,
+	Hashtable perm_redir_list = HttpClientUtil.getList(perm_redir_cntxt_list,
 					    req.getConnection().getContext());
-	if ((new_loc = (URI) perm_redir_list.get(cur_loc)) != null)
+	if ((new_loc = (HttpClientURI) perm_redir_list.get(cur_loc)) != null)
 	{
 	    /* copy query if present in old url but not in new url. This
 	     * isn't strictly conforming, but some scripts fail to properly
@@ -139,12 +139,12 @@ class RedirectionModule implements HTTPClientModule, GlobalConstants
 	    req.setRequestURI(nres);
 
 	    try
-		{ lastURI = new URI(new_loc, nres); }
+		{ lastURI = new HttpClientURI(new_loc, nres); }
 	    catch (ParseException pe)
 		{ }
 
 	    if (DebugMods)
-		Util.logLine("RdirM: matched request in permanent " +
+		HttpClientUtil.logLine("RdirM: matched request in permanent " +
 			     "redirection list - redoing request to " +
 			     lastURI);
 
@@ -201,7 +201,7 @@ class RedirectionModule implements HTTPClientModule, GlobalConstants
 	    case 302: // General (temporary) Redirection (handle like 303)
 
 		if (DebugMods)
-		    Util.logLine("RdirM: Received status: " + sts + " " +
+		    HttpClientUtil.logLine("RdirM: Received status: " + sts + " " +
 				 resp.getReasonLine() + " - treating as 303");
 
 		sts = 303;
@@ -211,7 +211,7 @@ class RedirectionModule implements HTTPClientModule, GlobalConstants
 	    case 307: // Moved Temporarily (we mean it!)
 
 		if (DebugMods)
-		    Util.logLine("RdirM: Handling status: " + sts + " " +
+		    HttpClientUtil.logLine("RdirM: Handling status: " + sts + " " +
 				 resp.getReasonLine());
 
 		// the spec says automatic redirection may only be done if
@@ -221,7 +221,7 @@ class RedirectionModule implements HTTPClientModule, GlobalConstants
 		    sts != 303)
 		{
 		    if (DebugMods)
-			Util.logLine("RdirM: not redirected because method " +
+			HttpClientUtil.logLine("RdirM: not redirected because method " +
 				     "is neither HEAD nor GET");
 
 		    if (sts == 301  &&  resp.getHeader("Location") != null)
@@ -237,14 +237,14 @@ class RedirectionModule implements HTTPClientModule, GlobalConstants
 
 		if (DebugMods)
 		    if (sts == 305  ||  sts == 306)
-			Util.logLine("RdirM: Handling status: " + sts + " " +
+			HttpClientUtil.logLine("RdirM: Handling status: " + sts + " " +
 				     resp.getReasonLine());
 
 		// Don't accept 305 from a proxy
 		if (sts == 305  &&  req.getConnection().getProxyHost() != null)
 		{
 		    if (DebugMods)
-			Util.logLine("RdirM: 305 ignored because a proxy is " +
+			HttpClientUtil.logLine("RdirM: 305 ignored because a proxy is " +
 				     "already in use");
 
 		    resp.setEffectiveURI(lastURI);
@@ -264,10 +264,10 @@ class RedirectionModule implements HTTPClientModule, GlobalConstants
 		    if (DebugMods)
 		    {
 			if (level == 15)
-			    Util.logLine("RdirM: not redirected because there "+
+			    HttpClientUtil.logLine("RdirM: not redirected because there "+
 					 "were too many levels of redirection");
 			else
-			    Util.logLine("RdirM: not redirected because no " +
+			    HttpClientUtil.logLine("RdirM: not redirected because no " +
 					 "Location header was present");
 		    }
 
@@ -276,7 +276,7 @@ class RedirectionModule implements HTTPClientModule, GlobalConstants
 		}
 		level++;
 
-		URI loc = resLocHdr(resp.getHeader("Location"), req);
+		HttpClientURI loc = resLocHdr(resp.getHeader("Location"), req);
 
 		HTTPConnection mvd;
 		String nres;
@@ -379,14 +379,14 @@ class RedirectionModule implements HTTPClientModule, GlobalConstants
 			if (sts == 301)
 			    try
 			    {
-				update_perm_redir_list(req, new URI(loc, nres));
+				update_perm_redir_list(req, new HttpClientURI(loc, nres));
 			    }
 			    catch (ParseException pe)
 				{ /* ??? */ }
 		    }
 
 		    // Adjust Referer, if present
-		    Util.updateValue(req.getHeaders(), "Referer",
+		    HttpClientUtil.updateValue(req.getHeaders(), "Referer",
 				     req.getConnection()+req.getRequestURI());
 		}
 
@@ -399,19 +399,19 @@ class RedirectionModule implements HTTPClientModule, GlobalConstants
 		if (sts == 305  ||  sts == 306)
 		{
 		    if (DebugMods)
-			Util.logLine("RdirM: resending request using proxy " + 
+			HttpClientUtil.logLine("RdirM: resending request using proxy " + 
 				     mvd.getProxyHost() + ":" +
 				     mvd.getProxyPort());
 		}
 		else
 		{
 		    try
-			{ lastURI = new URI(loc, nres); }
+			{ lastURI = new HttpClientURI(loc, nres); }
 		    catch (ParseException pe)
 			{ /* ??? */ }
 
 		    if (DebugMods)
-			Util.logLine("RdirM: request redirected to " + lastURI +
+			HttpClientUtil.logLine("RdirM: request redirected to " + lastURI +
 				     " using method " + req.getMethod());
 		}
 
@@ -451,13 +451,13 @@ class RedirectionModule implements HTTPClientModule, GlobalConstants
      * @param the original request
      8 @param the new location
      */
-    private static void update_perm_redir_list(RoRequest req, URI new_loc)
+    private static void update_perm_redir_list(RoRequest req, HttpClientURI new_loc)
     {
 	HTTPConnection con = req.getConnection();
-	URI cur_loc = null;
+	HttpClientURI cur_loc = null;
 	try
 	{
-	    cur_loc = new URI(con.getProtocol(),
+	    cur_loc = new HttpClientURI(con.getProtocol(),
 			      con.getHost(),
 			      con.getPort(),
 			      req.getRequestURI());
@@ -468,7 +468,7 @@ class RedirectionModule implements HTTPClientModule, GlobalConstants
 	if (!cur_loc.equals(new_loc))
 	{
 	    Hashtable perm_redir_list =
-			Util.getList(perm_redir_cntxt_list, con.getContext());
+			HttpClientUtil.getList(perm_redir_cntxt_list, con.getContext());
 	    perm_redir_list.put(cur_loc, new_loc);
 	}
     }
@@ -485,20 +485,20 @@ class RedirectionModule implements HTTPClientModule, GlobalConstants
      * @ throws ProtocolException if the Location header field is completely
      *                            unparseable
      */
-    private URI resLocHdr(String loc, RoRequest req)  throws ProtocolException
+    private HttpClientURI resLocHdr(String loc, RoRequest req)  throws ProtocolException
     {
 	try
-	    { return new URI(loc); }
+	    { return new HttpClientURI(loc); }
 	catch (ParseException pe)
 	{
 	    // it might be a relative URL (i.e. another broken server)
 	    try
 	    {
-		URI base = new URI(req.getConnection().getProtocol(),
+		HttpClientURI base = new HttpClientURI(req.getConnection().getProtocol(),
 				   req.getConnection().getHost(),
 				   req.getConnection().getPort(),
 				   req.getRequestURI());
-		return new URI(base, loc);
+		return new HttpClientURI(base, loc);
 	    }
 	    catch (ParseException pe2)
 	    {
@@ -518,7 +518,7 @@ class RedirectionModule implements HTTPClientModule, GlobalConstants
      * @return true if the url refers to the same server as the connection,
      *         false otherwise.
      */
-    private boolean sameServer(HTTPConnection con, URI uri)
+    private boolean sameServer(HTTPConnection con, HttpClientURI uri)
     {
 	if (!uri.getScheme().equalsIgnoreCase(con.getProtocol()))
 	    return false;

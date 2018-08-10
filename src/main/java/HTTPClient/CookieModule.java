@@ -89,13 +89,13 @@ public class CookieModule implements HTTPClientModule, GlobalConstants
 	// First remove any Cookie headers we might have set for a previous
 	// request
 
-	req.setHeaders(Util.removeAllValues(req.getHeaders(), "Cookie"));
+	req.setHeaders(HttpClientUtil.removeAllValues(req.getHeaders(), "Cookie"));
 
 
 	// Now set any new cookie headers
 
 	Hashtable cookie_list =
-	    Util.getList(cookie_cntxt_list, req.getConnection().getContext());
+	    HttpClientUtil.getList(cookie_cntxt_list, req.getConnection().getContext());
 	if (cookie_list.size() == 0)
 	    return REQ_CONTINUE;	// no need to create a lot of objects
 
@@ -160,21 +160,21 @@ public class CookieModule implements HTTPClientModule, GlobalConstants
 		value.append((String) names.elementAt(idx));
 	    }
 	    NVPair[] hdrs = req.getHeaders();
-	    hdrs = Util.resizeArray(hdrs, hdrs.length+1);
+	    hdrs = HttpClientUtil.resizeArray(hdrs, hdrs.length+1);
 	    hdrs[hdrs.length-1] = new NVPair("Cookie", value.toString());
 
 	    // add Cookie2 header if necessary
 	    if (!cookie2)
 	    {
-		int idx = Util.getIndex(hdrs, "Cookie2");
+		int idx = HttpClientUtil.getIndex(hdrs, "Cookie2");
 		if (idx == hdrs.length)
-		    hdrs = Util.addValue(hdrs, "Cookie2", "$Version=\"1\"");
+		    hdrs = HttpClientUtil.addValue(hdrs, "Cookie2", "$Version=\"1\"");
 	    }
 
 	    req.setHeaders(hdrs);
 
 	    if (DebugMods)
-		Util.logLine("CookM: Sending cookies '" + value + "'");
+		HttpClientUtil.logLine("CookM: Sending cookies '" + value + "'");
 	}
 
 	return REQ_CONTINUE;
@@ -251,14 +251,14 @@ public class CookieModule implements HTTPClientModule, GlobalConstants
 
 	if (DebugMods)
 	{
-	    Util.logLine("CookM: Received and parsed " + cookies.length +
+	    HttpClientUtil.logLine("CookM: Received and parsed " + cookies.length +
 			 " cookies:");
 	    for (int idx=0; idx<cookies.length; idx++)
-		Util.logLine("CookM: Cookie " + idx + ": " +cookies[idx]);
+		HttpClientUtil.logLine("CookM: Cookie " + idx + ": " +cookies[idx]);
 	}
 
 	Hashtable cookie_list =
-	    Util.getList(cookie_cntxt_list, req.getConnection().getContext());
+	    HttpClientUtil.getList(cookie_cntxt_list, req.getConnection().getContext());
 	synchronized(cookie_list)
 	{
 	    for (int idx=0; idx<cookies.length; idx++)
@@ -296,7 +296,7 @@ public class CookieModule implements HTTPClientModule, GlobalConstants
      */
     public static void discardAllCookies(Object context)
     {
-	Hashtable cookie_list = Util.getList(cookie_cntxt_list, context);
+	Hashtable cookie_list = HttpClientUtil.getList(cookie_cntxt_list, context);
 	synchronized(cookie_list)
 	    { cookie_list.clear(); }
     }
@@ -320,7 +320,7 @@ public class CookieModule implements HTTPClientModule, GlobalConstants
 		Hashtable cntxt = (Hashtable) cntxt_list.nextElement();
 		synchronized(cntxt)
 		{
-		    cookies = Util.resizeArray(cookies, idx+cntxt.size());
+		    cookies = HttpClientUtil.resizeArray(cookies, idx+cntxt.size());
 		    Enumeration cookie_list = cntxt.elements();
 		    while (cookie_list.hasMoreElements())
 			cookies[idx++] = (Cookie) cookie_list.nextElement();
@@ -341,7 +341,7 @@ public class CookieModule implements HTTPClientModule, GlobalConstants
      */
     public static Cookie[] listAllCookies(Object context)
     {
-	Hashtable cookie_list = Util.getList(cookie_cntxt_list, context);
+	Hashtable cookie_list = HttpClientUtil.getList(cookie_cntxt_list, context);
 
 	synchronized(cookie_list)
 	{
@@ -367,7 +367,7 @@ public class CookieModule implements HTTPClientModule, GlobalConstants
     public static void addCookie(Cookie cookie)
     {
 	Hashtable cookie_list =
-	    Util.getList(cookie_cntxt_list, HTTPConnection.getDefaultContext());
+	    HttpClientUtil.getList(cookie_cntxt_list, HTTPConnection.getDefaultContext());
 	cookie_list.put(cookie, cookie);
     }
 
@@ -383,7 +383,7 @@ public class CookieModule implements HTTPClientModule, GlobalConstants
      */
     public static void addCookie(Cookie cookie, Object context)
     {
-	Hashtable cookie_list = Util.getList(cookie_cntxt_list, context);
+	Hashtable cookie_list = HttpClientUtil.getList(cookie_cntxt_list, context);
 	cookie_list.put(cookie, cookie);
     }
 
@@ -398,7 +398,7 @@ public class CookieModule implements HTTPClientModule, GlobalConstants
     public static void removeCookie(Cookie cookie)
     {
 	Hashtable cookie_list =
-	    Util.getList(cookie_cntxt_list, HTTPConnection.getDefaultContext());
+	    HttpClientUtil.getList(cookie_cntxt_list, HTTPConnection.getDefaultContext());
 	cookie_list.remove(cookie);
     }
 
@@ -413,7 +413,7 @@ public class CookieModule implements HTTPClientModule, GlobalConstants
      */
     public static void removeCookie(Cookie cookie, Object context)
     {
-	Hashtable cookie_list = Util.getList(cookie_cntxt_list, context);
+	Hashtable cookie_list = HttpClientUtil.getList(cookie_cntxt_list, context);
 	cookie_list.remove(cookie);
     }
 
@@ -495,7 +495,7 @@ class DefaultCookiePolicyHandler implements CookiePolicyHandler
 	    { list = System.getProperty("HTTPClient.cookies.hosts.accept"); }
 	catch (Exception e)
 	    { list = null; }
-	String[] domains = Util.splitProperty(list);
+	String[] domains = HttpClientUtil.splitProperty(list);
 	for (int idx=0; idx<domains.length; idx++)
 	    addAcceptDomain(domains[idx].toLowerCase());
 
@@ -503,7 +503,7 @@ class DefaultCookiePolicyHandler implements CookiePolicyHandler
 	    { list = System.getProperty("HTTPClient.cookies.hosts.reject"); }
 	catch (Exception e)
 	    { list = null; }
-	domains = Util.splitProperty(list);
+	domains = HttpClientUtil.splitProperty(list);
 	for (int idx=0; idx<domains.length; idx++)
 	    addRejectDomain(domains[idx].toLowerCase());
     }
@@ -583,7 +583,7 @@ class DefaultCookiePolicyHandler implements CookiePolicyHandler
 	    }
 	}
 	accept_domains =
-		    Util.resizeArray(accept_domains, accept_domains.length+1);
+		    HttpClientUtil.resizeArray(accept_domains, accept_domains.length+1);
 	accept_domains[accept_domains.length-1] = domain;
     }
 
@@ -604,7 +604,7 @@ class DefaultCookiePolicyHandler implements CookiePolicyHandler
 	}
 
 	reject_domains =
-		    Util.resizeArray(reject_domains, reject_domains.length+1);
+		    HttpClientUtil.resizeArray(reject_domains, reject_domains.length+1);
 	reject_domains[reject_domains.length-1] = domain;
     }
 

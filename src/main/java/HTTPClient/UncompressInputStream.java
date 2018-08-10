@@ -164,7 +164,7 @@ class UncompressInputStream extends FilterInputStream
 						      (1<<l_n_bits) - 1;
 
 		    if (debug)
-			Util.logLine("Code-width expanded to " + l_n_bits);
+			HttpClientUtil.logLine("Code-width expanded to " + l_n_bits);
 
 		    l_bitmask = (1<<l_n_bits)-1;
 		    l_bit_pos = resetbuf(l_bit_pos);
@@ -209,7 +209,7 @@ class UncompressInputStream extends FilterInputStream
 		    l_maxcode = (1 << l_n_bits) - 1;
 		    l_bitmask = l_maxcode;
 
-		    if (debug)  Util.logLine("Code tables reset");
+		    if (debug)  HttpClientUtil.logLine("Code tables reset");
 
 		    l_bit_pos = resetbuf(l_bit_pos);
 		    continue main_loop;
@@ -391,8 +391,8 @@ class UncompressInputStream extends FilterInputStream
 
 	if (debug)
 	{
-	    Util.logLine("block mode: " + block_mode);
-	    Util.logLine("max bits:   " + maxbits);
+	    HttpClientUtil.logLine("block mode: " + block_mode);
+	    HttpClientUtil.logLine("max bits:   " + maxbits);
 	}
 
 

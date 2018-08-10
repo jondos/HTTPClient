@@ -123,17 +123,17 @@ class AuthorizationModule implements HTTPClientModule, GlobalConstants
 	    deferred_auth_list.remove(out);
 
 	    if (DebugMods)
-		Util.logLine("AuthM: Handling deferred auth challenge");
+		HttpClientUtil.logLine("AuthM: Handling deferred auth challenge");
 
 	    handle_auth_challenge(req, saved_resp);
 
 	    if (DebugMods)
 	    {
 		if (auth_sent != null)
-		    Util.logLine("AuthM: Sending request with " +
+		    HttpClientUtil.logLine("AuthM: Sending request with " +
 				 "Authorization '" + auth_sent + "'");
 		else
-		    Util.logLine("AuthM: Sending request with " +
+		    HttpClientUtil.logLine("AuthM: Sending request with " +
 				 "Proxy-Authorization '" + prxy_sent +
 				 "'");
 	    }
@@ -146,7 +146,7 @@ class AuthorizationModule implements HTTPClientModule, GlobalConstants
 
 	Proxy: if (con.getProxyHost() != null  &&  !prxy_from_4xx)
 	{
-	    Hashtable proxy_auth_list = Util.getList(proxy_cntxt_list,
+	    Hashtable proxy_auth_list = HttpClientUtil.getList(proxy_cntxt_list,
 					     req.getConnection().getContext());
 	    guess = (AuthorizationInfo) proxy_auth_list.get(
 				    con.getProxyHost()+":"+con.getProxyPort());
@@ -161,14 +161,14 @@ class AuthorizationModule implements HTTPClientModule, GlobalConstants
 		if (guess == null) break Proxy;
 	    }
 
-	    req.setHeaders(Util.setValue(req.getHeaders(),
+	    req.setHeaders(HttpClientUtil.setValue(req.getHeaders(),
 				    "Proxy-Authorization", guess.toString()));
 
 	    prxy_sent     = guess;
 	    prxy_from_4xx = false;
 
 	    if (DebugMods)
-		Util.logLine("AuthM: Preemptively sending " +
+		HttpClientUtil.logLine("AuthM: Preemptively sending " +
 			     "Proxy-Authorization '" + guess + "'");
 	}
 
@@ -189,14 +189,14 @@ class AuthorizationModule implements HTTPClientModule, GlobalConstants
 		if (guess == null) break Auth;
 	    }
 
-	    req.setHeaders(Util.setValue(req.getHeaders(),
+	    req.setHeaders(HttpClientUtil.setValue(req.getHeaders(),
 					 "Authorization", guess.toString()));
 
 	    auth_sent     = guess;
 	    auth_from_4xx = false;
 
 	    if (DebugMods)
-		Util.logLine("AuthM: Preemptively sending Authorization '" +
+		HttpClientUtil.logLine("AuthM: Preemptively sending Authorization '" +
 			     guess + "'");
 	}
 
@@ -280,7 +280,7 @@ class AuthorizationModule implements HTTPClientModule, GlobalConstants
 		    resp.setRetryRequest(true);
 
 		    if (DebugMods)
-			Util.logLine("AuthM: Handling of status " + sts +
+			HttpClientUtil.logLine("AuthM: Handling of status " + sts +
 				     " deferred because an output stream was" +
 				     " used");
 
@@ -290,7 +290,7 @@ class AuthorizationModule implements HTTPClientModule, GlobalConstants
 
 		// handle the challenge
 
-		if (DebugMods) Util.logLine("AuthM: Handling status: " + sts +
+		if (DebugMods) HttpClientUtil.logLine("AuthM: Handling status: " + sts +
 					    " " + resp.getReasonLine());
 
 
@@ -302,7 +302,7 @@ class AuthorizationModule implements HTTPClientModule, GlobalConstants
 		if (auth_sent == null  &&  prxy_sent == null)
 		{
 		    if (DebugMods)
-			Util.logLine("AuthM: No Auth Info found - status " +
+			HttpClientUtil.logLine("AuthM: No Auth Info found - status " +
 				     sts + " not handled");
 
 		    return RSP_CONTINUE;
@@ -317,10 +317,10 @@ class AuthorizationModule implements HTTPClientModule, GlobalConstants
 		if (DebugMods)
 		{
 		    if (auth_sent != null)
-			Util.logLine("AuthM: Resending request with " +
+			HttpClientUtil.logLine("AuthM: Resending request with " +
 				     "Authorization '" + auth_sent + "'");
 		    if (prxy_sent != null)
-			Util.logLine("AuthM: Resending request with " +
+			HttpClientUtil.logLine("AuthM: Resending request with " +
 				     "Proxy-Authorization '" + prxy_sent +
 				     "'");
 		}
@@ -389,7 +389,7 @@ class AuthorizationModule implements HTTPClientModule, GlobalConstants
 	if (prxy_sent != null)
 	{
 	    HTTPConnection con = req.getConnection();
-	    Util.getList(proxy_cntxt_list, con.getContext())
+	    HttpClientUtil.getList(proxy_cntxt_list, con.getContext())
 		.put(con.getProxyHost()+":"+con.getProxyPort(),
 		     prxy_sent);
 	}
@@ -450,9 +450,9 @@ class AuthorizationModule implements HTTPClientModule, GlobalConstants
 
 	if (DebugMods)
 	{
-	    Util.logLine("AuthM: parsed " + challenge.length + " challenges:");
+	    HttpClientUtil.logLine("AuthM: parsed " + challenge.length + " challenges:");
 	    for (int idx=0; idx<challenge.length; idx++)
-		Util.logLine("AuthM: Challenge " + challenge[idx]);
+		HttpClientUtil.logLine("AuthM: Challenge " + challenge[idx]);
 	}
 
 
@@ -525,7 +525,7 @@ class AuthorizationModule implements HTTPClientModule, GlobalConstants
 
 	// add credentials to headers
 	req.setHeaders(
-	    Util.setValue(req.getHeaders(), header, credentials.toString()));
+	    HttpClientUtil.setValue(req.getHeaders(), header, credentials.toString()));
 
 	// done
 	return credentials;

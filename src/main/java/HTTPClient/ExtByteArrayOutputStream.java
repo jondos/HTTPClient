@@ -92,10 +92,10 @@ final class ExtByteArrayOutputStream
 	int len = str.length();
 
 	if (buf.length - count < len)
-	    buf = Util.resizeArray(buf, Math.max(buf.length*2, count + 2*len));
+	    buf = HttpClientUtil.resizeArray(buf, Math.max(buf.length*2, count + 2*len));
 
 //	str.getBytes(0, len, buf, count);
-	Util.getBytes(str,buf,count);
+	HttpClientUtil.getBytes(str,buf,count);
 	count += len;
     }
 
@@ -112,14 +112,14 @@ final class ExtByteArrayOutputStream
 	int len1 = str1.length(), len2 = str2.length();
 
 	if (buf.length - count < (len1+len2))
-	    buf = Util.resizeArray(buf,
+	    buf = HttpClientUtil.resizeArray(buf,
 				Math.max(buf.length*2, count + 2*(len1+len2)));
 
 //        str1.getBytes(0, len1, buf, count);
-	Util.getBytes(str1,buf,count);
+	HttpClientUtil.getBytes(str1,buf,count);
 	count += len1;
 //	str2.getBytes(0, len2, buf, count);
-	Util.getBytes(str2,buf,count);
+	HttpClientUtil.getBytes(str2,buf,count);
 	count += len2;
     }
 
@@ -137,17 +137,17 @@ final class ExtByteArrayOutputStream
 	int len1 = str1.length(), len2 = str2.length(), len3 = str3.length();
 
 	if (buf.length - count < (len1+len2+len3))
-	    buf = Util.resizeArray(buf,
+	    buf = HttpClientUtil.resizeArray(buf,
 			    Math.max(buf.length*2, count + 2*(len1+len2+len3)));
 
 //	str1.getBytes(0, len1, buf, count);
-	Util.getBytes(str1,buf,count);
+	HttpClientUtil.getBytes(str1,buf,count);
 	count += len1;
 //	str2.getBytes(0, len2, buf, count);
-	Util.getBytes(str2,buf,count);
+	HttpClientUtil.getBytes(str2,buf,count);
 	count += len2;
 //	str3.getBytes(0, len3, buf, count);
-	Util.getBytes(str3,buf,count);
+	HttpClientUtil.getBytes(str3,buf,count);
 	count += len3;
     }
 
@@ -161,7 +161,7 @@ final class ExtByteArrayOutputStream
     public final void write(byte[] data)
     {
 	if (buf.length - count < data.length)
-	    buf = Util.resizeArray(buf,
+	    buf = HttpClientUtil.resizeArray(buf,
 			       Math.max(buf.length*2, count + 2*data.length));
 
 	System.arraycopy(data, 0, buf, count, data.length);

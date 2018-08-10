@@ -82,7 +82,7 @@ class RetryModule implements HTTPClientModule, GlobalConstants
 	}
 	catch (RetryException re)
 	{
-	    if (DebugMods) Util.logLine("RtryM: Caught RetryException");
+	    if (DebugMods) HttpClientUtil.logLine("RtryM: Caught RetryException");
 
 	    boolean got_lock = false;
 
@@ -143,7 +143,7 @@ class RetryModule implements HTTPClientModule, GlobalConstants
 		    {
 			if (con.ServProtVersKnown  &&
 			    con.ServerProtocolVersion >= HTTP_1_1)
-			    req.setHeaders(Util.addToken(req.getHeaders(),
+			    req.setHeaders(HttpClientUtil.addToken(req.getHeaders(),
 						    "Expect", "100-continue"));
 			else
 			    req.delay_entity = 5000L << req.num_retries;
@@ -160,7 +160,7 @@ class RetryModule implements HTTPClientModule, GlobalConstants
 			 con.ServerProtocolVersion < HTTP_1_1)  &&
 			 e.conn_reset)
 		    {
-			req.setHeaders(Util.addToken(req.getHeaders(),
+			req.setHeaders(HttpClientUtil.addToken(req.getHeaders(),
 						     "Connection", "close"));
 		    }
 
@@ -188,7 +188,7 @@ class RetryModule implements HTTPClientModule, GlobalConstants
 		    // now resend the request
 
 		    if (DebugDemux)
-			Util.logLine("RtryM: Retrying request '" +
+			HttpClientUtil.logLine("RtryM: Retrying request '" +
 				     req.getMethod() + " " +
 				     req.getRequestURI() + "'");
 
