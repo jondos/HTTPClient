@@ -104,11 +104,11 @@ class IdempotentSequence
     public void add(Request req)
     {
 	if (m_len >= m_history.length)
-	    m_history = Util.resizeArray(m_history, m_history.length+10);
+	    m_history = HttpClientUtil.resizeArray(m_history, m_history.length+10);
 	m_history[m_len++] = methodNum(req.getMethod());
 
 	if (r_len >= r_history.length)
-	    r_history = Util.resizeArray(r_history, r_history.length+10);
+	    r_history = HttpClientUtil.resizeArray(r_history, r_history.length+10);
 	r_history[r_len++] = req.getRequestURI();
     }
 

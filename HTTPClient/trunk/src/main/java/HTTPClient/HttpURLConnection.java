@@ -164,7 +164,7 @@ public class HttpURLConnection extends java.net.HttpURLConnection
 	    {
 		connections.clear();
 		non_proxy_hosts = hosts;
-		String[] list = Util.splitProperty(hosts);
+		String[] list = HttpClientUtil.splitProperty(hosts);
 		for (int idx=0; idx<list.length; idx++)
 		    HTTPConnection.dontProxyFor(list[idx]);
 	    }
@@ -216,7 +216,7 @@ public class HttpURLConnection extends java.net.HttpURLConnection
 
 	String php = url.getProtocol() + ":" + url.getHost() + ":" +
 		     ((url.getPort() != -1) ? url.getPort() :
-					    URI.defaultPort(url.getProtocol()));
+					    HttpClientURI.defaultPort(url.getProtocol()));
 
 	HTTPConnection con = (HTTPConnection) connections.get(php);
 	if (con != null)  return con;
@@ -246,7 +246,7 @@ public class HttpURLConnection extends java.net.HttpURLConnection
 	    throw new ProtocolException("Already connected!");
 
 	if (DebugURLC)
-	    Util.logLine("URLC:  (" + url + ") Setting request method: " +
+	    HttpClientUtil.logLine("URLC:  (" + url + ") Setting request method: " +
 			 method);
 
 	this.method = method.trim().toUpperCase();
@@ -544,7 +544,7 @@ public class HttpURLConnection extends java.net.HttpURLConnection
 	if (output_stream == null)
 	{
 	    if (DebugURLC)
-		Util.logLine("URLC:  (" +url+ ") creating output stream");
+		HttpClientUtil.logLine("URLC:  (" +url+ ") creating output stream");
 
 	    // Hack: because of restrictions when using true output streams
 	    // and because form-data is usually quite limited in size, we
@@ -594,7 +594,7 @@ public class HttpURLConnection extends java.net.HttpURLConnection
     public void setIfModifiedSince(long time)
     {
 	super.setIfModifiedSince(time);
-	setRequestProperty("If-Modified-Since", Util.httpDate(new Date(time)));
+	setRequestProperty("If-Modified-Since", HttpClientUtil.httpDate(new Date(time)));
     }
 
 
@@ -607,7 +607,7 @@ public class HttpURLConnection extends java.net.HttpURLConnection
     public void setRequestProperty(String name, String value)
     {
 	if (DebugURLC)
-	    Util.logLine("URLC:  (" + url + ") Setting request property: " +
+	    HttpClientUtil.logLine("URLC:  (" + url + ") Setting request property: " +
 			 name + " : " + value);
 
 	int idx;
@@ -618,7 +618,7 @@ public class HttpURLConnection extends java.net.HttpURLConnection
 	}
 
 	if (idx == headers.length)
-	    headers = Util.resizeArray(headers, idx+1);
+	    headers = HttpClientUtil.resizeArray(headers, idx+1);
 
 	headers[idx] = new NVPair(name, value);
     }
@@ -652,7 +652,7 @@ public class HttpURLConnection extends java.net.HttpURLConnection
     public static void setDefaultRequestProperty(String name, String value)
     {
 	if (DebugURLC)
-	    Util.logLine("URLC:  Setting default request property: " + name +
+	    HttpClientUtil.logLine("URLC:  Setting default request property: " + name +
 			 " : " + value);
 
 	int idx;
@@ -663,7 +663,7 @@ public class HttpURLConnection extends java.net.HttpURLConnection
 	}
 
 	if (idx == default_headers.length)
-	    default_headers = Util.resizeArray(default_headers, idx+1);
+	    default_headers = HttpClientUtil.resizeArray(default_headers, idx+1);
 
 	default_headers[idx] = new NVPair(name, value);
     }
@@ -720,7 +720,7 @@ public class HttpURLConnection extends java.net.HttpURLConnection
     {
 	if (connected)  return;
 
-	if (DebugURLC)  Util.logLine("URLC:  (" + url + ") Connecting ...");
+	if (DebugURLC)  HttpClientUtil.logLine("URLC:  (" + url + ") Connecting ...");
 
 	// useCaches TBD!!!
 
@@ -754,7 +754,7 @@ public class HttpURLConnection extends java.net.HttpURLConnection
      */
     public void disconnect()
     {
-	if (DebugURLC)  Util.logLine("URLC:  (" + url + ") Disconnecting ...");
+	if (DebugURLC)  HttpClientUtil.logLine("URLC:  (" + url + ") Disconnecting ...");
 
 	con.stop();
 

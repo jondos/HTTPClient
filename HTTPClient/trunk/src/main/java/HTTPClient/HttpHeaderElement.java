@@ -34,9 +34,9 @@ package HTTPClient;
  * This class holds a description of an http header element. It is used
  * by <code>HTTPClient.Util.parseHeader()</code>.
  *
- * @see Util#parseHeader(java.lang.String)
- * @see Util#getElement(java.util.Vector, java.lang.String)
- * @see Util#assembleHeader(java.util.Vector)
+ * @see HttpClientUtil#parseHeader(java.lang.String)
+ * @see HttpClientUtil#getElement(java.util.Vector, java.lang.String)
+ * @see HttpClientUtil#assembleHeader(java.util.Vector)
  * @version	0.3  30/01/1998
  * @author	Ronald Tschal&auml;r
  */
@@ -164,10 +164,10 @@ public class HttpHeaderElement
 
 	if (value != null)
 	{
-	    if (Util.needsQuoting(value))
+	    if (HttpClientUtil.needsQuoting(value))
 	    {
 		buf.append("=\"");
-		buf.append(Util.quoteString(value, "\\\""));
+		buf.append(HttpClientUtil.quoteString(value, "\\\""));
 		buf.append('"');
 	    }
 	    else
@@ -184,10 +184,10 @@ public class HttpHeaderElement
 	    String pval = parameters[idx].getValue();
 	    if (pval != null)
 	    {
-		if (Util.needsQuoting(pval))
+		if (HttpClientUtil.needsQuoting(pval))
 		{
 		    buf.append("=\"");
-		    buf.append(Util.quoteString(pval, "\\\""));
+		    buf.append(HttpClientUtil.quoteString(pval, "\\\""));
 		    buf.append('"');
 		}
 		else

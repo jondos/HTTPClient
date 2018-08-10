@@ -97,7 +97,7 @@ class ContentMD5Module implements HTTPClientModule, GlobalConstants
 	try
 	{
 	    if (trailer != null)
-		md5_tok = Util.hasToken(trailer, "Content-MD5");
+		md5_tok = HttpClientUtil.hasToken(trailer, "Content-MD5");
 	}
 	catch (ParseException pe)
 	    { throw new ModuleException(pe.toString()); }
@@ -109,10 +109,10 @@ class ContentMD5Module implements HTTPClientModule, GlobalConstants
 	if (DebugMods)
 	{
 	    if (md5_digest != null)
-		Util.logLine("CMD5M: Received digest: " + md5_digest +
+		HttpClientUtil.logLine("CMD5M: Received digest: " + md5_digest +
 			     " - pushing md5-check-stream");
 	    else
-		Util.logLine("CMD5M: Expecting digest in trailer " +
+		HttpClientUtil.logLine("CMD5M: Expecting digest in trailer " +
 			     " - pushing md5-check-stream");
 	}
 
@@ -167,7 +167,7 @@ class VerifyMD5 implements HashVerifier, GlobalConstants
 	}
 
 	if (DebugMods)
-	    Util.logLine("CMD5M: hash successfully verified");
+	    HttpClientUtil.logLine("CMD5M: hash successfully verified");
     }
 
 

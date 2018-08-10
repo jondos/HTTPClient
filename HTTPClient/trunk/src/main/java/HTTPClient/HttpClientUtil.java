@@ -49,7 +49,7 @@ import java.util.Locale;
  * @author      modified by Stefan Lieske, 2005/02/13
  */
 
-public class Util
+public class HttpClientUtil
 {
     private static final BitSet Separators;
     private static final BitSet TokenChar;
@@ -120,7 +120,7 @@ public class Util
     /**
      * This class isn't meant to be instantiated.
      */
-    private Util() {}
+    private HttpClientUtil() {}
 
 
     // Methods
@@ -446,7 +446,7 @@ public class Util
 	    if (qlist.indexOf(buf[pos], 0) != -1)
 	    {
 		if (len == buf.length)
-		    buf = Util.resizeArray(buf, len+str.length());
+		    buf = HttpClientUtil.resizeArray(buf, len+str.length());
 
 		System.arraycopy(buf, pos, buf, pos+1, len-pos);
 		len++;
@@ -609,7 +609,7 @@ public class Util
 		    end = beg;
 		}
 
-		params = Util.resizeArray(params, params.length+1);
+		params = HttpClientUtil.resizeArray(params, params.length+1);
 		params[params.length-1] = new NVPair(param_name, param_value);
 	    }
 
@@ -1002,7 +1002,7 @@ public class Util
 	if (idx == -1)
 	{
 	    idx = list.length;
-	    list = Util.resizeArray(list, list.length+1);
+	    list = HttpClientUtil.resizeArray(list, list.length+1);
 	}
 
 	list[idx] = new NVPair(key, val);
@@ -1027,7 +1027,7 @@ public class Util
 	if (idx == -1)
 	{
 	    idx = list.length;
-	    list = Util.resizeArray(list, list.length+1);
+	    list = HttpClientUtil.resizeArray(list, list.length+1);
 	}
 
 	list[idx] = new NVPair(key, val, a_quoteValue);
@@ -1060,7 +1060,7 @@ public class Util
     public final static NVPair[] addValue(NVPair[] list, String key, String val)
     {
 	int idx = list.length;
-	list = Util.resizeArray(list, list.length+1);
+	list = HttpClientUtil.resizeArray(list, list.length+1);
 	list[idx] = new NVPair(key, val);
 
 	return list;
@@ -1091,7 +1091,7 @@ public class Util
             }
         }
         if (length < list.length)
-            list = Util.resizeArray(list, length);
+            list = HttpClientUtil.resizeArray(list, length);
 
 	return list;
     }
@@ -1116,7 +1116,7 @@ public class Util
 	    return addValue(list, hdr, tok);
 	else				// header exists, so add token
 	{
-	    if (!Util.hasToken(list[idx].getValue(), tok))
+	    if (!HttpClientUtil.hasToken(list[idx].getValue(), tok))
 		list[idx] = new NVPair(hdr, list[idx].getValue() + ", " + tok);
 	    return list;
 	}
@@ -1149,7 +1149,7 @@ public class Util
 	if (p_list.isEmpty())
 	{
 	    System.arraycopy(list, idx+1, list, idx, list.length-idx-1);
-	    list = Util.resizeArray(list, list.length-1);
+	    list = HttpClientUtil.resizeArray(list, list.length-1);
 	}
 	else
 	    list[idx] = new NVPair(hdr, assembleHeader(p_list));
@@ -1181,13 +1181,13 @@ public class Util
 	    return false;
 
 	int port1 = url1.getPort(), port2 = url2.getPort();
-	if (port1 == -1)  port1 = URI.defaultPort(url1.getProtocol());
-	if (port2 == -1)  port2 = URI.defaultPort(url1.getProtocol());
+	if (port1 == -1)  port1 = HttpClientURI.defaultPort(url1.getProtocol());
+	if (port2 == -1)  port2 = HttpClientURI.defaultPort(url1.getProtocol());
 	if (port1 != port2)
 	    return false;
 
 	try
-	    { return URI.unescape(url1.getFile()).equals(URI.unescape(url2.getFile()));}
+	    { return HttpClientURI.unescape(url1.getFile()).equals(HttpClientURI.unescape(url2.getFile()));}
 	catch (ParseException pe)
 	    { return url1.getFile().equals(url2.getFile());}
     }
@@ -1212,7 +1212,7 @@ public class Util
     {
 	if (http_format == null)
 	{
-	    synchronized(HTTPClient.Util.class)
+	    synchronized(HTTPClient.HttpClientUtil.class)
 	    {
 		if (http_format == null)
 		{

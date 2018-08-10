@@ -174,9 +174,9 @@ public class HttpOutputStream extends OutputStream implements GlobalConstants
 
 	if (DebugConn)
 	{
-	    Util.logLine("OutS:  Stream ready for writing");
+	    HttpClientUtil.logLine("OutS:  Stream ready for writing");
 	    if (bos != null)
-		Util.logLine("OutS:  Buffering all data before sending request");
+		HttpClientUtil.logLine("OutS:  Buffering all data before sending request");
 	}
     }
 
@@ -322,13 +322,13 @@ public class HttpOutputStream extends OutputStream implements GlobalConstants
 
 		// add the trailers to the headers
 
-		hdrs = Util.resizeArray(hdrs, len+trailers.length);
+		hdrs = HttpClientUtil.resizeArray(hdrs, len+trailers.length);
 		System.arraycopy(trailers, 0, hdrs, len, trailers.length);
 
 		req.setHeaders(hdrs);
 	    }
 
-	    if (DebugConn)  Util.logLine("OutS:  Sending request");
+	    if (DebugConn)  HttpClientUtil.logLine("OutS:  Sending request");
 
 	    try
 		{ resp = req.getConnection().sendRequest(req, con_to); }
@@ -349,7 +349,7 @@ public class HttpOutputStream extends OutputStream implements GlobalConstants
 
 		os.flush();
 
-		if (DebugConn)  Util.logLine("OutS:  All data sent");
+		if (DebugConn)  HttpClientUtil.logLine("OutS:  All data sent");
 	    }
 	    catch (IOException ioe)
 	    {

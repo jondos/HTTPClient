@@ -155,7 +155,7 @@ public class Cookie2 extends Cookie
     {
 	Vector cookies;
 	try
-	    { cookies = Util.parseHeader(set_cookie); }
+	    { cookies = HttpClientUtil.parseHeader(set_cookie); }
 	catch (ParseException pe)
 	    { throw new ProtocolException(pe.getMessage()); }
 
@@ -333,7 +333,7 @@ public class Cookie2 extends Cookie
 	    // check validity
 
 	    // path attribute must be a prefix of the request-URI
-	    if (!Util.getPath(req.getRequestURI()).startsWith(curr.path))
+	    if (!HttpClientUtil.getPath(req.getRequestURI()).startsWith(curr.path))
 		continue;
 
 	    // if host name is simple (i.e w/o a domain) then append .local
@@ -368,7 +368,7 @@ public class Cookie2 extends Cookie
 	}
 
 	if (cidx < cookie_arr.length)
-	    cookie_arr = Util.resizeArray(cookie_arr, cidx);
+	    cookie_arr = HttpClientUtil.resizeArray(cookie_arr, cidx);
 
 	return cookie_arr;
     }
@@ -443,7 +443,7 @@ public class Cookie2 extends Cookie
 	return ((domain.charAt(0) == '.'  &&  eff_host.endsWith(domain)  ||
 		 domain.charAt(0) != '.'  &&  eff_host.equals(domain))  &&
 		port_match  &&
-		Util.getPath(req.getRequestURI()).startsWith(path)  &&
+		HttpClientUtil.getPath(req.getRequestURI()).startsWith(path)  &&
 		(!secure || con.getProtocol().equals("https") ||
 		 con.getProtocol().equals("shttp")));
     }

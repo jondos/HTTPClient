@@ -93,7 +93,7 @@ class DefaultModule implements HTTPClientModule, GlobalConstants
 		if (req_timeout_retries-- == 0  ||  req.getStream() != null)
 		{
 		    if (DebugMods)
-			Util.logLine("DefM:  Status " + sts + " " +
+			HttpClientUtil.logLine("DefM:  Status " + sts + " " +
 				     resp.getReasonLine() + " not handled - " +
 				     "maximum number of retries exceeded");
 
@@ -102,7 +102,7 @@ class DefaultModule implements HTTPClientModule, GlobalConstants
 		else
 		{
 		    if (DebugMods)
-			Util.logLine("DefM:  Handling " + sts + " " +
+			HttpClientUtil.logLine("DefM:  Handling " + sts + " " +
 				     resp.getReasonLine() + " - " +
 				     "resending request");
 
@@ -121,7 +121,7 @@ class DefaultModule implements HTTPClientModule, GlobalConstants
 					    " though Content-Length was sent");
 
 		if (DebugMods)
-		    Util.logLine("DefM:  Handling " + sts + " " +
+		    HttpClientUtil.logLine("DefM:  Handling " + sts + " " +
 				 resp.getReasonLine() + " - resending " +
 				 "request with 'Content-length: 0'");
 

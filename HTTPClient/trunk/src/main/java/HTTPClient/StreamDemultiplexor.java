@@ -79,7 +79,7 @@ class StreamDemultiplexor implements GlobalConstants
     /** end of headers - CRLF CRLF */
     private static byte[]          hdr_end = { (byte) '\r', (byte) '\n',
 					       (byte) '\r', (byte) '\n' };
-    private static int[]           hdr_cmp = Util.compile_search(hdr_end);
+    private static int[]           hdr_cmp = HttpClientUtil.compile_search(hdr_end);
     private boolean                hdr_term_set = false;
     private boolean                trl_term_set = false;
 
@@ -152,7 +152,7 @@ class StreamDemultiplexor implements GlobalConstants
     private void init(Socket sock)  throws IOException
     {
 	if (DebugDemux)
-	    Util.logLine("Demux: Initializing Stream Demultiplexor (" +
+	    HttpClientUtil.logLine("Demux: Initializing Stream Demultiplexor (" +
 			 this.hashCode() + ")");
 
 	this.Sock       = sock;
@@ -227,7 +227,7 @@ class StreamDemultiplexor implements GlobalConstants
      */
     public Socket releaseSocket() {
       if (DebugDemux) {
-        Util.logLine("Demux: releasing socket (" + this.hashCode() + ")");
+        HttpClientUtil.logLine("Demux: releasing socket (" + this.hashCode() + ")");
       }
       Socket releasedSocket = null;
       synchronized (this) {
@@ -331,7 +331,7 @@ class StreamDemultiplexor implements GlobalConstants
 
 	    if (DebugDemux)
 	    {
-		Util.logLine("Demux: Reading for stream " +
+		HttpClientUtil.logLine("Demux: Reading for stream " +
 			     resph.stream.hashCode());
 	    }
 
@@ -344,7 +344,7 @@ class StreamDemultiplexor implements GlobalConstants
 		if (timeout != cur_timeout)
 		{
 		    if (DebugDemux)
-			Util.logLine("Demux: Setting timeout to " + timeout +
+			HttpClientUtil.logLine("Demux: Setting timeout to " + timeout +
 				     " ms");
 
 		    try
@@ -480,9 +480,9 @@ class StreamDemultiplexor implements GlobalConstants
 	    {
 		if (DebugDemux)
 		{
-		    Util.logLine("Demux: (" + this.hashCode() + ")");
-		    Util.logMessage("       ");
-		    Util.logStackTrace(ioe);
+		    HttpClientUtil.logLine("Demux: (" + this.hashCode() + ")");
+		    HttpClientUtil.logMessage("       ");
+		    HttpClientUtil.logStackTrace(ioe);
 		}
 
 		close(ioe, true);
@@ -492,9 +492,9 @@ class StreamDemultiplexor implements GlobalConstants
 	    {
 		if (DebugDemux)
 		{
-		    Util.logLine("Demux: (" + this.hashCode() + ")");
-		    Util.logMessage("       ");
-		    Util.logStackTrace(pe);
+		    HttpClientUtil.logLine("Demux: (" + this.hashCode() + ")");
+		    HttpClientUtil.logMessage("       ");
+		    HttpClientUtil.logStackTrace(pe);
 		}
 
 		close(new IOException(pe.toString()), true);
@@ -590,10 +590,10 @@ class StreamDemultiplexor implements GlobalConstants
 	    return;
 
 	if (DebugDemux)
-	    Util.logLine("Demux: Closing all streams and socket (" +
+	    HttpClientUtil.logLine("Demux: Closing all streams and socket (" +
 			 this.hashCode() + ")");
 	if (DebugDemux)
-	    Util.logStackTrace(new Throwable());
+	    HttpClientUtil.logStackTrace(new Throwable());
 
 	/** @author  modified by Stefan Lieske, 2005/02/14 */
 	//try
@@ -699,7 +699,7 @@ class StreamDemultiplexor implements GlobalConstants
 	    return;
 
 	if (DebugDemux)
-	    Util.logLine("Demux: Closing stream " + resph.stream.hashCode());
+	    HttpClientUtil.logLine("Demux: Closing stream " + resph.stream.hashCode());
 
 	resph.eof = true;
 	RespHandlerList.remove(resph);
@@ -811,7 +811,7 @@ class StreamDemultiplexor implements GlobalConstants
 		MarkedForClose = resph;
 
 		if (DebugDemux)
-		    Util.logLine("Demux: stream " + resph.stream.hashCode() +
+		    HttpClientUtil.logLine("Demux: stream " + resph.stream.hashCode() +
 				 " marked for close");
 
 		closeSocketIfAllStreamsClosed();
@@ -831,7 +831,7 @@ class StreamDemultiplexor implements GlobalConstants
 	closeSocketIfAllStreamsClosed();
 
 	if (DebugDemux)
-	    Util.logLine("Demux: stream " + lasth.stream.hashCode() +
+	    HttpClientUtil.logLine("Demux: stream " + lasth.stream.hashCode() +
 			 " marked for close");
     }
 
@@ -845,7 +845,7 @@ class StreamDemultiplexor implements GlobalConstants
     void abort()
     {
 	if (DebugDemux)
-	    Util.logLine("Demux: Aborting socket (" + this.hashCode() + ")");
+	    HttpClientUtil.logLine("Demux: Aborting socket (" + this.hashCode() + ")");
 
 
 	// notify all responses of abort

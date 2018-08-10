@@ -77,20 +77,20 @@ class TransferEncodingModule implements HTTPClientModule, GlobalConstants
 	// Parse TE header
 
 	NVPair[] hdrs = req.getHeaders();
-	int idx = Util.getIndex(hdrs, "TE");
+	int idx = HttpClientUtil.getIndex(hdrs, "TE");
 
 	Vector pte;
 	if (idx == -1)
 	{
 	    idx = hdrs.length;
-	    hdrs = Util.resizeArray(hdrs, idx+1);
+	    hdrs = HttpClientUtil.resizeArray(hdrs, idx+1);
 	    req.setHeaders(hdrs);
 	    pte = new Vector();
 	}
 	else
 	{
 	    try
-		{ pte = Util.parseHeader(hdrs[idx].getValue()); }
+		{ pte = HttpClientUtil.parseHeader(hdrs[idx].getValue()); }
 	    catch (ParseException pe)
 		{ throw new ModuleException(pe.toString()); }
 	}
@@ -98,7 +98,7 @@ class TransferEncodingModule implements HTTPClientModule, GlobalConstants
 
         // done if "*;q=1.0" present
 
-        HttpHeaderElement all = Util.getElement(pte, "*");
+        HttpHeaderElement all = HttpClientUtil.getElement(pte, "*");
         if (all != null)
 	{
 	    NVPair[] params = all.getParams();
@@ -135,7 +135,7 @@ class TransferEncodingModule implements HTTPClientModule, GlobalConstants
 	if (!pte.contains(new HttpHeaderElement("compress")))
 	    pte.addElement(new HttpHeaderElement("compress"));
 
-	hdrs[idx] = new NVPair("TE", Util.assembleHeader(pte));
+	hdrs[idx] = new NVPair("TE", HttpClientUtil.assembleHeader(pte));
 
 	return REQ_CONTINUE;
     }
@@ -170,7 +170,7 @@ class TransferEncodingModule implements HTTPClientModule, GlobalConstants
 
 	Vector pte;
 	try
-	    { pte = Util.parseHeader(te); }
+	    { pte = HttpClientUtil.parseHeader(te); }
 	catch (ParseException pe)
 	    { throw new ModuleException(pe.toString()); }
 
@@ -179,39 +179,39 @@ class TransferEncodingModule implements HTTPClientModule, GlobalConstants
 	    String encoding = ((HttpHeaderElement) pte.lastElement()).getName();
 	    if (encoding.equalsIgnoreCase("gzip"))
 	    {
-		if (DebugMods) Util.logLine("TEM:   pushing gzip-input-stream");
+		if (DebugMods) HttpClientUtil.logLine("TEM:   pushing gzip-input-stream");
 
 		resp.inp_stream = new GZIPInputStream(resp.inp_stream);
 	    }
 	    else if (encoding.equalsIgnoreCase("deflate"))
 	    {
 		if (DebugMods)
-		    Util.logLine("TEM:   pushing inflater-input-stream");
+		    HttpClientUtil.logLine("TEM:   pushing inflater-input-stream");
 
 		resp.inp_stream = new InflaterInputStream(resp.inp_stream);
 	    }
 	    else if (encoding.equalsIgnoreCase("compress"))
 	    {
 		if (DebugMods)
-		    Util.logLine("TEM:   pushing uncompress-input-stream");
+		    HttpClientUtil.logLine("TEM:   pushing uncompress-input-stream");
 
 		resp.inp_stream = new UncompressInputStream(resp.inp_stream);
 	    }
 	    else if (encoding.equalsIgnoreCase("chunked"))
 	    {
 		if (DebugMods)
-		    Util.logLine("TEM:   pushing chunked-input-stream");
+		    HttpClientUtil.logLine("TEM:   pushing chunked-input-stream");
 
 		resp.inp_stream = new ChunkedInputStream(resp.inp_stream);
 	    }
 	    else if (encoding.equalsIgnoreCase("identity"))
 	    {
-		if (DebugMods) Util.logLine("TEM:   ignoring 'identity' token");
+		if (DebugMods) HttpClientUtil.logLine("TEM:   ignoring 'identity' token");
 	    }
 	    else
 	    {
 		if (DebugMods)
-		    Util.logLine("TEM:   Unknown transfer encoding '" +
+		    HttpClientUtil.logLine("TEM:   Unknown transfer encoding '" +
 				 encoding + "'");
 
 		break;
@@ -221,7 +221,7 @@ class TransferEncodingModule implements HTTPClientModule, GlobalConstants
 	}
 
 	if (pte.size() > 0)
-	    resp.setHeader("Transfer-Encoding", Util.assembleHeader(pte));
+	    resp.setHeader("Transfer-Encoding", HttpClientUtil.assembleHeader(pte));
 	else
 	    resp.deleteHeader("Transfer-Encoding");
     }

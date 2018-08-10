@@ -128,7 +128,7 @@ class RespInputStream extends InputStream implements GlobalConstants
 	else
 	{
 	    if (DebugDemux)
-		Util.logLine("RspIS: Reading stream " + this.hashCode());
+		HttpClientUtil.logLine("RspIS: Reading stream " + this.hashCode());
 
 	    int rcvd;
 	    /*
@@ -208,7 +208,7 @@ class RespInputStream extends InputStream implements GlobalConstants
 		readAll(resph.resp.timeout);
 
 	    if (DebugDemux)
-		Util.logLine("Demux: User closed stream " + hashCode());
+		HttpClientUtil.logLine("Demux: User closed stream " + hashCode());
 
 	    demux.closeSocketIfAllStreamsClosed();
 
@@ -253,7 +253,7 @@ class RespInputStream extends InputStream implements GlobalConstants
     void readAll(int timeout)  throws IOException
     {
 	if (DebugDemux)
-	    Util.logLine("RspIS: Read-all on stream " + this.hashCode());
+	    HttpClientUtil.logLine("RspIS: Read-all on stream " + this.hashCode());
 
 	synchronized(resph.resp)
 	{
@@ -301,7 +301,7 @@ class RespInputStream extends InputStream implements GlobalConstants
 
 			count  += rcvd;
 			end    += rcvd;
-			buffer  = Util.resizeArray(buffer, end+10000);
+			buffer  = HttpClientUtil.resizeArray(buffer, end+10000);
 		    } while (true);
 		}
 	    }

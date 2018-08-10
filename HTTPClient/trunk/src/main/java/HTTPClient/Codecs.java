@@ -400,7 +400,7 @@ public class Codecs
 	{
 	    byte[] tmp = uudecode(line.toCharArray());
 	    if (off + tmp.length > body.length)
-		body = Util.resizeArray(body, off+1000);
+		body = HttpClientUtil.resizeArray(body, off+1000);
 	    System.arraycopy(tmp, 0, body, off, tmp.length);
 	    off += tmp.length;
 	}
@@ -409,7 +409,7 @@ public class Codecs
 	    throw new ParseException("'end' line not found");
 
 
-	return Util.resizeArray(body, off);
+	return HttpClientUtil.resizeArray(body, off);
     }
 
 
@@ -473,7 +473,7 @@ public class Codecs
 		sidx++;
 	}
 
-	return Util.resizeArray(dest, didx);
+	return HttpClientUtil.resizeArray(dest, didx);
     }
 
 
@@ -546,7 +546,7 @@ public class Codecs
 	    }
 
 	    if (didx > res.length-5)
-		res = Util.resizeArray(res, res.length+500);
+		res = HttpClientUtil.resizeArray(res, res.length+500);
 	}
 
 	return String.valueOf(res, 1, didx-1);
@@ -637,7 +637,7 @@ public class Codecs
 	    }
 
 	    if (didx > res.length-nl.length-2)
-		res = Util.resizeArray(res, res.length+500);
+		res = HttpClientUtil.resizeArray(res, res.length+500);
 	}
 
 	return new String(res, 0, didx);
@@ -786,7 +786,7 @@ public class Codecs
     {
 	// Find and extract boundary string
 
-	String bndstr = Util.getParameter("boundary", cont_type);
+	String bndstr = HttpClientUtil.getParameter("boundary", cont_type);
 	if (bndstr == null)
 	    throw new ParseException("'boundary' parameter not found in Content-type: " + cont_type);
 
@@ -797,14 +797,14 @@ public class Codecs
 
 	// setup search routines
 
-	int[] bs = Util.compile_search(srtbndry),
-	      bc = Util.compile_search(boundary),
-	      be = Util.compile_search(endbndry);
+	int[] bs = HttpClientUtil.compile_search(srtbndry),
+	      bc = HttpClientUtil.compile_search(boundary),
+	      be = HttpClientUtil.compile_search(endbndry);
 
 
 	// let's start parsing the actual data
 
-	int start = Util.findStr(srtbndry, bs, data, 0, data.length);
+	int start = HttpClientUtil.findStr(srtbndry, bs, data, 0, data.length);
 	if (start == -1)	// didn't even find the start
 	    throw new ParseException("Starting boundary not found: " +
 				     new String(srtbndry));
@@ -818,10 +818,10 @@ public class Codecs
 	{
 	    // find end of this part
 
-	    int end = Util.findStr(boundary, bc, data, start, data.length);
+	    int end = HttpClientUtil.findStr(boundary, bc, data, start, data.length);
 	    if (end == -1)		// must be the last part
 	    {
-		end = Util.findStr(endbndry, be, data, start, data.length);
+		end = HttpClientUtil.findStr(endbndry, be, data, start, data.length);
 		if (end == -1)
 		    throw new ParseException("Ending boundary not found: " +
 					     new String(endbndry));
@@ -852,8 +852,8 @@ public class Codecs
 		if (!hdr.regionMatches(true, 0, "Content-Disposition", 0, 19))
 		    continue;
 		Vector pcd =
-			Util.parseHeader(hdr.substring(hdr.indexOf(':')+1));
-		HttpHeaderElement elem = Util.getElement(pcd, "form-data");
+			HttpClientUtil.parseHeader(hdr.substring(hdr.indexOf(':')+1));
+		HttpHeaderElement elem = HttpClientUtil.getElement(pcd, "form-data");
 
 		if (elem == null)
 		    throw new ParseException("Expected 'Content-Disposition: form-data' in line: "+hdr);
@@ -903,13 +903,13 @@ public class Codecs
 	    }
 
 	    if (idx >= res.length)
-		res = Util.resizeArray(res, idx+10);
+		res = HttpClientUtil.resizeArray(res, idx+10);
 	    res[idx] = new NVPair(name, value);
 
 	    start = end + boundary.length;
 	}
 
-	return Util.resizeArray(res, idx);
+	return HttpClientUtil.resizeArray(res, idx);
     }
 
 
@@ -1033,11 +1033,11 @@ public class Codecs
 	       filename  = new byte[13];
 
 //        ContDisp.getBytes(0, ContDisp.length(), cont_disp, 0);
-	Util.getBytes(ContDisp,cont_disp,0);
+	HttpClientUtil.getBytes(ContDisp,cont_disp,0);
   //      FileName.getBytes(0, FileName.length(), filename, 0);
-	Util.getBytes(FileName,filename,0);
+	HttpClientUtil.getBytes(FileName,filename,0);
   //	Boundary.getBytes(0, Boundary.length(), boundary, 0);
-	Util.getBytes(Boundary,boundary,0);
+	HttpClientUtil.getBytes(Boundary,boundary,0);
   
 	if (opts == null)   opts  = dummy;
 	if (files == null)  files = dummy;
@@ -1087,7 +1087,7 @@ public class Codecs
 
 	    int off = 2;
 
-	    int[] bnd_cmp = Util.compile_search(boundary);
+	    int[] bnd_cmp = HttpClientUtil.compile_search(boundary);
 
 	    for (int idx=0; idx<opts.length; idx++)
 	    {
@@ -1099,9 +1099,9 @@ public class Codecs
 
 		int nlen = opts[idx].getName().length();
 //		opts[idx].getName().getBytes(0, nlen, res, pos);
-                Util.getBytes(opts[idx].getName(),nlen,res,pos);
+                HttpClientUtil.getBytes(opts[idx].getName(),nlen,res,pos);
 		if (nlen >= boundary.length  &&
-		    Util.findStr(boundary, bnd_cmp, res, pos, pos+nlen) != -1)
+		    HttpClientUtil.findStr(boundary, bnd_cmp, res, pos, pos+nlen) != -1)
 		    continue NewBound;
 		pos += nlen;
 
@@ -1113,9 +1113,9 @@ public class Codecs
 
 		int vlen = opts[idx].getValue().length();
 //		opts[idx].getValue().getBytes(0, vlen, res, pos);
-                Util.getBytes(opts[idx].getValue(),vlen,res,pos);
+                HttpClientUtil.getBytes(opts[idx].getValue(),vlen,res,pos);
 		if (vlen >= boundary.length  &&
-		    Util.findStr(boundary, bnd_cmp, res, pos, pos+vlen) != -1)
+		    HttpClientUtil.findStr(boundary, bnd_cmp, res, pos, pos+vlen) != -1)
 		    continue NewBound;
 		pos += vlen;
 	    }
@@ -1136,9 +1136,9 @@ public class Codecs
 
 		int nlen = files[idx].getName().length();
 		//files[idx].getName().getBytes(0, nlen, res, pos);
-		Util.getBytes(files[idx].getName(),res,pos);
+		HttpClientUtil.getBytes(files[idx].getName(),res,pos);
                 if (nlen >= boundary.length  &&
-		    Util.findStr(boundary, bnd_cmp, res, pos, pos+nlen) != -1)
+		    HttpClientUtil.findStr(boundary, bnd_cmp, res, pos, pos+nlen) != -1)
 		    continue NewBound;
 		pos += nlen;
 
@@ -1147,9 +1147,9 @@ public class Codecs
 
 		nlen = fname.length();
 		//fname.getBytes(0, nlen, res, pos);
-		Util.getBytes(fname,res,pos);
+		HttpClientUtil.getBytes(fname,res,pos);
 		if (nlen >= boundary.length  &&
-		    Util.findStr(boundary, bnd_cmp, res, pos, pos+nlen) != -1)
+		    HttpClientUtil.findStr(boundary, bnd_cmp, res, pos, pos+nlen) != -1)
 		    continue NewBound;
 		pos += nlen;
 
@@ -1168,7 +1168,7 @@ public class Codecs
 		    nlen -= got;
 		    pos += got;
 		}
-		if (Util.findStr(boundary, bnd_cmp, res, opos, pos) != -1)
+		if (HttpClientUtil.findStr(boundary, bnd_cmp, res, opos, pos) != -1)
 		    continue NewBound;
 	    }
 
@@ -1338,7 +1338,7 @@ public class Codecs
 	if (len > 0)
 	{
 //	    hex_len.getBytes(0, hex_len.length(), res, r_off);
-            Util.getBytes(hex_len,res,r_off);
+            HttpClientUtil.getBytes(hex_len,res,r_off);
 	    r_off += hex_len.length();
 	    res[r_off++] = (byte) '\r';
 	    res[r_off++] = (byte) '\n';
@@ -1359,7 +1359,7 @@ public class Codecs
 	    {
 		//ftrs[idx].getName().getBytes(0, ftrs[idx].getName().length(),
 		//			     res, r_off);
-                Util.getBytes(ftrs[idx].getName(),res,r_off);
+                HttpClientUtil.getBytes(ftrs[idx].getName(),res,r_off);
 		r_off += ftrs[idx].getName().length();
 
 		res[r_off++] = (byte) ':';
@@ -1367,7 +1367,7 @@ public class Codecs
 
 		//ftrs[idx].getValue().getBytes(0, ftrs[idx].getValue().length(),
 		//			      res, r_off);
-                Util.getBytes(ftrs[idx].getValue(),res,r_off);
+                HttpClientUtil.getBytes(ftrs[idx].getValue(),res,r_off);
 		r_off += ftrs[idx].getValue().length();
 
 		res[r_off++] = (byte) '\r';
@@ -1438,7 +1438,7 @@ public class Codecs
 		if (colon == -1)
 		    throw new ParseException("Error in Footer format: no "+
 					     "':' found in '" + line + "'");
-		res = Util.resizeArray(res, res.length+1);
+		res = HttpClientUtil.resizeArray(res, res.length+1);
 		res[res.length-1] = new NVPair(line.substring(0, colon).trim(),
 					       line.substring(colon+1).trim());
 	    }

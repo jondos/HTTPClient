@@ -102,7 +102,7 @@ public class Cookie implements java.io.Serializable
 	expires = null;
 	domain  = req.getConnection().getHost();
 	if (domain.indexOf('.') == -1)  domain += ".local";
-	path    = Util.getPath(req.getRequestURI());
+	path    = HttpClientUtil.getPath(req.getRequestURI());
 
 	String prot = req.getConnection().getProtocol();
 	if (prot.equals("https")  ||  prot.equals("shttp"))
@@ -134,7 +134,7 @@ public class Cookie implements java.io.Serializable
 
         cookies: while (true)                    // get all cookies
         {
-            beg = Util.skipSpace(buf, beg);
+            beg = HttpClientUtil.skipSpace(buf, beg);
             if (beg >= len)  break;	// no more left
 	    if (buf[beg] == ',')	// empty header
 	    {
@@ -154,7 +154,7 @@ public class Cookie implements java.io.Serializable
 		// skip empty fields
 		if (buf[beg] == ';')
 		{
-		    beg = Util.skipSpace(buf, beg+1);
+		    beg = HttpClientUtil.skipSpace(buf, beg+1);
 		    continue;
 		}
 
@@ -164,9 +164,9 @@ public class Cookie implements java.io.Serializable
 		    curr.secure = true;
 		    beg += 6;
 
-		    beg = Util.skipSpace(buf, beg);
+		    beg = HttpClientUtil.skipSpace(buf, beg);
 		    if (beg < len  &&  buf[beg] == ';')	// consume ";"
-			beg = Util.skipSpace(buf, beg+1);
+			beg = HttpClientUtil.skipSpace(buf, beg+1);
 		    else if (beg < len  &&  buf[beg] != ',')
 			throw new ProtocolException("Bad Set-Cookie header: " +
 						    set_cookie + "\nExpected " +
@@ -181,9 +181,9 @@ public class Cookie implements java.io.Serializable
 		    curr.httponly = true;
 		    beg += 8;
 
-		    beg = Util.skipSpace(buf, beg);
+		    beg = HttpClientUtil.skipSpace(buf, beg);
 		    if (beg < len  &&  buf[beg] == ';')	// consume ";"
-			beg = Util.skipSpace(buf, beg+1);
+			beg = HttpClientUtil.skipSpace(buf, beg+1);
 		    else if (beg < len  &&  buf[beg] != ',')
 			throw new ProtocolException("Bad Set-Cookie header: " +
 						    set_cookie + "\nExpected " +
@@ -205,7 +205,7 @@ public class Cookie implements java.io.Serializable
 		    
 
 		String name = set_cookie.substring(beg, end).trim();
-		beg = Util.skipSpace(buf, end+1);
+		beg = HttpClientUtil.skipSpace(buf, end+1);
 
 		if (name.equalsIgnoreCase("expires"))
 		{
@@ -226,7 +226,7 @@ public class Cookie implements java.io.Serializable
 		if (name.equalsIgnoreCase("expires"))
 		{
 		    try
-			{ curr.expires = Util.parseDate(value); }
+			{ curr.expires = HttpClientUtil.parseDate(value); }
 		    catch (IllegalArgumentException iae)
 		    {
 			/* More broken servers to deal with... Ignore expires
@@ -299,7 +299,7 @@ public class Cookie implements java.io.Serializable
 
 		beg = end;
 		if (beg < len  &&  buf[beg] == ';')	// consume ";"
-		    beg = Util.skipSpace(buf, beg+1);
+		    beg = HttpClientUtil.skipSpace(buf, beg+1);
 	    }
 
 	    if (curr.name == null  ||  curr.value == null)
@@ -310,7 +310,7 @@ public class Cookie implements java.io.Serializable
 
 	    if (legal)
 	    {
-		cookie_arr = Util.resizeArray(cookie_arr, cookie_arr.length+1);
+		cookie_arr = HttpClientUtil.resizeArray(cookie_arr, cookie_arr.length+1);
 		cookie_arr[cookie_arr.length-1] = curr;
 	    }
 	}
@@ -408,7 +408,7 @@ public class Cookie implements java.io.Serializable
 
 	return ((domain.charAt(0) == '.'  &&  eff_host.endsWith(domain)  ||
 		 domain.charAt(0) != '.'  &&  eff_host.equals(domain))  &&
-		Util.getPath(req.getRequestURI()).startsWith(path)  &&
+		HttpClientUtil.getPath(req.getRequestURI()).startsWith(path)  &&
 		(!secure || con.getProtocol().equals("https") ||
 		 con.getProtocol().equals("shttp")));
     }

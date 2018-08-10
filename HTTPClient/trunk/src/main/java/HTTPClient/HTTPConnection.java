@@ -327,7 +327,7 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 
 						if (DebugConn)
 							{
-								Util.logLine("Conn:  using proxy " + host + ":" + port);
+								HttpClientUtil.logLine("Conn:  using proxy " + host + ":" + port);
 							}
 						setProxyServer(host, port);
 					}
@@ -341,7 +341,7 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 										int port = Integer.getInteger("proxyPort", -1).intValue();
 										if (DebugConn)
 											{
-												Util.logLine("Conn:  using proxy " + host + ":" + port);
+												HttpClientUtil.logLine("Conn:  using proxy " + host + ":" + port);
 											}
 										setProxyServer(host, port);
 									}
@@ -368,7 +368,7 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 							{
 								if (Default_Tunnel_Host != null)
 									{
-										Util.logLine("Conn:  using tunnel " + Default_Tunnel_Host + ":" + Default_Tunnel_Port);
+										HttpClientUtil.logLine("Conn:  using tunnel " + Default_Tunnel_Host + ":" + Default_Tunnel_Port);
 									}
 							}
 					}
@@ -388,7 +388,7 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 								hosts = System.getProperty("http.nonProxyHosts");
 							}
 
-						String[] list = Util.splitProperty(hosts);
+						String[] list = HttpClientUtil.splitProperty(hosts);
 						for (int idx = 0; idx < list.length; idx++)
 							{
 								dontProxyFor(list[idx]);
@@ -413,7 +413,7 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 								int version = Integer.getInteger("HTTPClient.socksVersion", -1).intValue();
 								if (DebugConn)
 									{
-										Util.logLine("Conn:  using SOCKS " + host + ":" + port);
+										HttpClientUtil.logLine("Conn:  using SOCKS " + host + ":" + port);
 									}
 								if (version == -1)
 									{
@@ -456,7 +456,7 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 								DefaultModuleList.addElement(modules[idx]);
 								if (DebugConn)
 									{
-										Util.logLine("Conn:  added module " + modules[idx]);
+										HttpClientUtil.logLine("Conn:  added module " + modules[idx]);
 									}
 							}
 						catch (Exception cnfe)
@@ -485,7 +485,7 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 							{
 								if (NeverPipeline)
 									{
-										Util.logLine("Conn:  disabling pipelining");
+										HttpClientUtil.logLine("Conn:  disabling pipelining");
 									}
 							}
 					}
@@ -503,7 +503,7 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 							{
 								if (disable_nagle)
 									{
-										Util.logLine("Conn:  disabling Nagle");
+										HttpClientUtil.logLine("Conn:  disabling Nagle");
 									}
 							}
 					}
@@ -521,7 +521,7 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 							{
 								if (force_1_0)
 									{
-										Util.logLine("Conn:  forcing HTTP/1.0 requests");
+										HttpClientUtil.logLine("Conn:  forcing HTTP/1.0 requests");
 									}
 							}
 					}
@@ -632,7 +632,7 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 		 * @exception ProtocolNotSuppException
 		 *              if the protocol is not HTTP
 		 */
-		public HTTPConnection(URI uri) throws ProtocolNotSuppException
+		public HTTPConnection(HttpClientURI uri) throws ProtocolNotSuppException
 			{
 				this(uri.getScheme(), uri.getHost(), uri.getPort());
 			}
@@ -655,7 +655,7 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 
 				if (Port == -1)
 					{
-						Port = URI.defaultPort(getProtocol());
+						Port = HttpClientURI.defaultPort(getProtocol());
 					}
 
 				if (Default_Proxy_Host != null && !matchNonProxy(host))
@@ -1031,9 +1031,9 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 		 */
 		public HTTPResponse Post(String file, NVPair form_data[], NVPair headers[]) throws IOException, ModuleException
 			{
-				if (Util.getIndex(headers, "Content-Type") == -1)
+				if (HttpClientUtil.getIndex(headers, "Content-Type") == -1)
 					{
-						headers = Util.addValue(headers, "Content-type", "application/x-www-form-urlencoded");
+						headers = HttpClientUtil.addValue(headers, "Content-type", "application/x-www-form-urlencoded");
 					}
 
 				return Post(file, Codecs.nv2query(form_data), headers);
@@ -1661,7 +1661,7 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 
 				if (didx < length)
 					{
-						DefaultHeaders = Util.resizeArray(DefaultHeaders, didx);
+						DefaultHeaders = HttpClientUtil.resizeArray(DefaultHeaders, didx);
 					}
 			}
 
@@ -1964,7 +1964,7 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 
 				if (DebugConn)
 					{
-						Util.logLine("Conn:  Added module " + module.getName() + " to default list");
+						HttpClientUtil.logLine("Conn:  Added module " + module.getName() + " to default list");
 					}
 
 				return true;
@@ -1986,7 +1986,7 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 					{
 						if (removed)
 							{
-								Util.logLine("Conn:  Removed module " + module.getName() + " from default list");
+								HttpClientUtil.logLine("Conn:  Removed module " + module.getName() + " from default list");
 							}
 					}
 
@@ -2795,7 +2795,7 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 
 				if (didx < merged.length)
 					{
-						merged = Util.resizeArray(merged, didx);
+						merged = HttpClientUtil.resizeArray(merged, didx);
 					}
 
 				return merged;
@@ -2933,7 +2933,7 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 							{
 								try
 									{
-										req.setHeaders(Util.addToken(req.getHeaders(), "Transfer-Encoding", "chunked"));
+										req.setHeaders(HttpClientUtil.addToken(req.getHeaders(), "Transfer-Encoding", "chunked"));
 									}
 								catch (ParseException pe)
 									{
@@ -2993,7 +2993,7 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 							{
 								if (DebugConn)
 									{
-										Util.logLine("Conn:  Early-stalling Request: " + req.getMethod() + " " + req.getRequestURI());
+										HttpClientUtil.logLine("Conn:  Early-stalling Request: " + req.getMethod() + " " + req.getRequestURI());
 									}
 
 								synchronized (early_stall)
@@ -3021,8 +3021,8 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 
 				try
 					{
-						if (ServerProtocolVersion >= HTTP_1_1 && !Util.hasToken(con_hdrs[0], "close")
-								|| ServerProtocolVersion == HTTP_1_0 && Util.hasToken(con_hdrs[0], "keep-alive"))
+						if (ServerProtocolVersion >= HTTP_1_1 && !HttpClientUtil.hasToken(con_hdrs[0], "close")
+								|| ServerProtocolVersion == HTTP_1_0 && HttpClientUtil.hasToken(con_hdrs[0], "keep-alive"))
 							{
 								keep_alive = true;
 							}
@@ -3048,7 +3048,7 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 									{
 										if (DebugConn)
 											{
-												Util.logLine("Conn:  Stalling Request: " + req.getMethod() + " " + req.getRequestURI());
+												HttpClientUtil.logLine("Conn:  Stalling Request: " + req.getMethod() + " " + req.getRequestURI());
 											}
 
 										try
@@ -3076,7 +3076,7 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 							{
 								if (DebugConn)
 									{
-										Util.logLine("Conn:  Stalling Request: " + req.getMethod() + " " + req.getRequestURI());
+										HttpClientUtil.logLine("Conn:  Stalling Request: " + req.getMethod() + " " + req.getRequestURI());
 									}
 
 								try
@@ -3193,8 +3193,8 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 
 										if (DebugConn)
 											{
-												Util.logLine("Conn:  Sending Request: ");
-												Util.logLine();
+												HttpClientUtil.logLine("Conn:  Sending Request: ");
+												HttpClientUtil.logLine();
 												hdr_buf.writeTo(System.err);
 											}
 
@@ -3204,7 +3204,7 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 										boolean wf_cont;
 										try
 											{
-												wf_cont = Util.hasToken(con_hdrs[1], "100-continue");
+												wf_cont = HttpClientUtil.hasToken(con_hdrs[1], "100-continue");
 											}
 										catch (ParseException pe)
 											{
@@ -3327,8 +3327,8 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 									{
 										if (DebugConn)
 											{
-												Util.logLine("Conn:  ");
-												Util.logStackTrace(ioe);
+												HttpClientUtil.logLine("Conn:  ");
+												HttpClientUtil.logStackTrace(ioe);
 											}
 
 										closeDemux(ioe);
@@ -3342,7 +3342,7 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 
 										if (DebugConn)
 											{
-												Util.logLine("Conn:  Retrying request");
+												HttpClientUtil.logLine("Conn:  Retrying request");
 											}
 										continue;
 									}
@@ -3369,7 +3369,7 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 							{
 								if (KeepAliveReqMax != -1)
 									{
-										Util.logLine("Conn:  Number of requests left: " + KeepAliveReqLeft);
+										HttpClientUtil.logLine("Conn:  Number of requests left: " + KeepAliveReqLeft);
 									}
 							}
 
@@ -3418,7 +3418,7 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 
 						if (DebugConn)
 							{
-								Util.logLine("Conn:  Request sent");
+								HttpClientUtil.logLine("Conn:  Request sent");
 							}
 					}
 
@@ -3465,7 +3465,7 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 
 				if (DebugConn)
 					{
-						Util.logLine("Conn:  Creating Socket: " + actual_host + ":" + actual_port);
+						HttpClientUtil.logLine("Conn:  Creating Socket: " + actual_host + ":" + actual_port);
 					}
 
 				if (con_timeout == 0)
@@ -3591,8 +3591,8 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 
 						if (DebugConn)
 							{
-								Util.logLine("Conn:  Sending SSL-Tunneling Subrequest: ");
-								Util.logLine();
+								HttpClientUtil.logLine("Conn:  Sending SSL-Tunneling Subrequest: ");
+								HttpClientUtil.logLine();
 								hdr_buf.writeTo(System.err);
 							}
 
@@ -3690,7 +3690,7 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 
 				// Generate request line and Host header
 
-				String file = Util.escapeUnsafeChars(req.getRequestURI());
+				String file = HttpClientUtil.escapeUnsafeChars(req.getRequestURI());
 				/** @author modified by Stefan Lieske 2005/02/14 */
 				if (req.getMethod().equals("CONNECT"))
 					{
@@ -3802,7 +3802,7 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 
 						try
 							{
-								if (ka_idx != -1 && Util.hasToken(con_hdrs[0], "keep-alive"))
+								if (ka_idx != -1 && HttpClientUtil.hasToken(con_hdrs[0], "keep-alive"))
 									{
 										hdr_buf.write("Keep-Alive: ", hdrs[ka_idx].getValue().trim(), "\r\n");
 									}
@@ -3826,7 +3826,7 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 					{
 						try
 							{
-								if (!Util.hasToken(co_hdr, "TE"))
+								if (!HttpClientUtil.hasToken(co_hdr, "TE"))
 									{
 										co_hdr += ", TE";
 									}
@@ -3859,7 +3859,7 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 						Vector pte;
 						try
 							{
-								pte = Util.parseHeader(hdrs[te_idx].getValue());
+								pte = HttpClientUtil.parseHeader(hdrs[te_idx].getValue());
 							}
 						catch (ParseException pe)
 							{
@@ -3935,7 +3935,7 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 						Vector expect_tokens;
 						try
 							{
-								expect_tokens = Util.parseHeader(hdrs[ex_idx].getValue());
+								expect_tokens = HttpClientUtil.parseHeader(hdrs[ex_idx].getValue());
 							}
 						catch (ParseException pe)
 							{
@@ -3954,7 +3954,7 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 
 						if (!expect_tokens.isEmpty())
 							{
-								con_hdrs[1] = Util.assembleHeader(expect_tokens);
+								con_hdrs[1] = HttpClientUtil.assembleHeader(expect_tokens);
 								hdr_buf.write("Expect: ", con_hdrs[1], "\r\n");
 							}
 					}
@@ -3998,7 +3998,7 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 
 				if (DebugConn)
 					{
-						Util.logLine("Conn:  Protocol Version established: " + ProtVers2String(ServerProtocolVersion));
+						HttpClientUtil.logLine("Conn:  Protocol Version established: " + ProtVers2String(ServerProtocolVersion));
 					}
 
 				// some (buggy) servers return an error status if they get a
@@ -4039,14 +4039,14 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 						if (ServerProtocolVersion >= HTTP_1_1 || ((((Proxy_Host == null || Protocol == HTTPS)
 								&& (con = resp.getHeader("Connection")) != null)
 								|| ((Proxy_Host != null && Protocol != HTTPS) && (con = resp.getHeader("Proxy-Connection")) != null))
-								&& Util.hasToken(con, "keep-alive")))
+								&& HttpClientUtil.hasToken(con, "keep-alive")))
 							{
 								DoesKeepAlive = true;
 								KeepAliveUnknown = false;
 
 								if (DebugConn)
 									{
-										Util.logLine("Conn:  Keep-Alive enabled");
+										HttpClientUtil.logLine("Conn:  Keep-Alive enabled");
 									}
 							}
 						else if (resp.getStatusCode() < 400)
@@ -4058,7 +4058,7 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 
 						if (DoesKeepAlive && ServerProtocolVersion == HTTP_1_0 && (con = resp.getHeader("Keep-Alive")) != null)
 							{
-								HttpHeaderElement max = Util.getElement(Util.parseHeader(con), "max");
+								HttpHeaderElement max = HttpClientUtil.getElement(HttpClientUtil.parseHeader(con), "max");
 								if (max != null && max.getValue() != null)
 									{
 										KeepAliveReqMax = Integer.parseInt(max.getValue());
@@ -4066,7 +4066,7 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 
 										if (DebugConn)
 											{
-												Util.logLine("Conn:  Max Keep-Alive requests: " + KeepAliveReqMax);
+												HttpClientUtil.logLine("Conn:  Max Keep-Alive requests: " + KeepAliveReqMax);
 											}
 									}
 							}
@@ -4119,7 +4119,7 @@ public class HTTPConnection implements GlobalConstants, HTTPClientModuleConstant
 		 */
 		public String toString()
 			{
-				return getProtocol() + "://" + getHost() + (getPort() != URI.defaultPort(getProtocol()) ? ":" + getPort() : "");
+				return getProtocol() + "://" + getHost() + (getPort() != HttpClientURI.defaultPort(getProtocol()) ? ":" + getPort() : "");
 			}
 		
 		/** Sets the socket factory to be used to create the socket during the Connect() call

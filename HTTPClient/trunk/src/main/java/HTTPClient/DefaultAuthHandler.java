@@ -127,7 +127,7 @@ public class DefaultAuthHandler implements AuthorizationHandler, GlobalConstants
 	    throw new AuthSchemeNotImplException(info.getScheme());
 
 	if (DebugAuth)
-	    Util.logLine("Auth:  fixing up Authorization for host " +
+	    HttpClientUtil.logLine("Auth:  fixing up Authorization for host " +
 			 info.getHost()+":"+info.getPort() +
 			 "; scheme: " + info.getScheme() +
 			 "; realm: " + info.getRealm());
@@ -161,7 +161,7 @@ public class DefaultAuthHandler implements AuthorizationHandler, GlobalConstants
 
 
 	if (DebugAuth)
-	    Util.logLine("Auth:  Requesting Authorization for host " +
+	    HttpClientUtil.logLine("Auth:  Requesting Authorization for host " +
 			 challenge.getHost()+":"+challenge.getPort() +
 			 "; challenge: " + challenge);
 
@@ -248,7 +248,7 @@ public class DefaultAuthHandler implements AuthorizationHandler, GlobalConstants
 
 	// Done
 
-	if (DebugAuth) Util.logLine("Auth:  Got Authorization");
+	if (DebugAuth) HttpClientUtil.logLine("Auth:  Got Authorization");
 
 	return cred;
     }
@@ -317,13 +317,13 @@ public class DefaultAuthHandler implements AuthorizationHandler, GlobalConstants
     {
 	if (auth_info == null)  return;
 
-	Vector pai = Util.parseHeader(auth_info);
+	Vector pai = HttpClientUtil.parseHeader(auth_info);
 	HttpHeaderElement elem;
 
 	if (handle_nextnonce(prev, req,
-			     elem = Util.getElement(pai, "nextnonce")))
+			     elem = HttpClientUtil.getElement(pai, "nextnonce")))
 	    pai.removeElement(elem);
-	if (handle_discard(prev, req, elem = Util.getElement(pai, "discard")))
+	if (handle_discard(prev, req, elem = HttpClientUtil.getElement(pai, "discard")))
 	    pai.removeElement(elem);
 
 	if (in_headers)
@@ -331,13 +331,13 @@ public class DefaultAuthHandler implements AuthorizationHandler, GlobalConstants
 	    HttpHeaderElement qop = null;
 
 	    if (pai != null  &&
-		(qop = Util.getElement(pai, "qop")) != null  &&
+		(qop = HttpClientUtil.getElement(pai, "qop")) != null  &&
 		qop.getValue() != null)
 	    {
 		handle_rspauth(prev, resp, req, pai, hdr_name);
 	    }
 	    else if (prev != null  &&
-		     (Util.hasToken(resp.getHeader("Trailer"), hdr_name)  &&
+		     (HttpClientUtil.hasToken(resp.getHeader("Trailer"), hdr_name)  &&
 		      hasParam(prev.getParams(), "qop", null)  ||
 		      hasParam(prev.getParams(), "qop", "auth-int")))
 	    {
@@ -346,7 +346,7 @@ public class DefaultAuthHandler implements AuthorizationHandler, GlobalConstants
 
 	    else if ((pai != null  &&  qop == null  &&
 		      pai.contains(new HttpHeaderElement("digest")))  ||
-		     (Util.hasToken(resp.getHeader("Trailer"), hdr_name)  &&
+		     (HttpClientUtil.hasToken(resp.getHeader("Trailer"), hdr_name)  &&
 		      prev != null  &&
 		      !hasParam(prev.getParams(), "qop", null)))
 	    {
@@ -355,7 +355,7 @@ public class DefaultAuthHandler implements AuthorizationHandler, GlobalConstants
 	}
 
 	if (pai.size() > 0)
-	    resp.setHeader(hdr_name, Util.assembleHeader(pai));
+	    resp.setHeader(hdr_name, HttpClientUtil.assembleHeader(pai));
 	else
 	    resp.deleteHeader(hdr_name);
     }
@@ -564,7 +564,7 @@ public class DefaultAuthHandler implements AuthorizationHandler, GlobalConstants
 	    {
 		if (opaque == -1)
 		{
-		    params = Util.resizeArray(params, params.length+1);
+		    params = HttpClientUtil.resizeArray(params, params.length+1);
 		    opaque = params.length-1;
 		}
 		params[opaque] = ch_params[ch_opaque];
@@ -574,7 +574,7 @@ public class DefaultAuthHandler implements AuthorizationHandler, GlobalConstants
 	    {
 		if (alg == -1)
 		{
-		    params = Util.resizeArray(params, params.length+1);
+		    params = HttpClientUtil.resizeArray(params, params.length+1);
 		    alg = params.length-1;
 		}
 		params[alg] = ch_params[ch_alg];
@@ -586,7 +586,7 @@ public class DefaultAuthHandler implements AuthorizationHandler, GlobalConstants
 	    {
 		if (cnonce == -1)
 		{
-		    params = Util.resizeArray(params, params.length+1);
+		    params = HttpClientUtil.resizeArray(params, params.length+1);
 		    cnonce = params.length-1;
 		}
 
@@ -616,12 +616,12 @@ public class DefaultAuthHandler implements AuthorizationHandler, GlobalConstants
 	    {
 		if (qop == -1)
 		{
-		    params = Util.resizeArray(params, params.length+1);
+		    params = HttpClientUtil.resizeArray(params, params.length+1);
 		    qop = params.length-1;
 		}
 
 		String[] qops =
-			    Util.splitList(ch_params[ch_qop].getValue(), ",");
+			    HttpClientUtil.splitList(ch_params[ch_qop].getValue(), ",");
 		String p = null;
 		for (int idx=0; idx<qops.length; idx++)
 		{
@@ -668,7 +668,7 @@ public class DefaultAuthHandler implements AuthorizationHandler, GlobalConstants
 		 */
 		if (nc == -1)
 		{
-		    params = Util.resizeArray(params, params.length+1);
+		    params = HttpClientUtil.resizeArray(params, params.length+1);
 		    nc = params.length-1;
         /** @author      modified by Stefan Lieske, 2005/02/13 */
         //params[nc] = new NVPair("nc", "00000001");
@@ -759,7 +759,7 @@ public class DefaultAuthHandler implements AuthorizationHandler, GlobalConstants
 	    NVPair[] d_params;
 	    if (digest == -1)
 	    {
-		d_params = Util.resizeArray(params, params.length+1);
+		d_params = HttpClientUtil.resizeArray(params, params.length+1);
 		digest = params.length;
 	    }
 	    else
@@ -771,7 +771,7 @@ public class DefaultAuthHandler implements AuthorizationHandler, GlobalConstants
 	    if (dreq == -1)	// if server requires digest, then so do we...
 	    {
 		dreq = d_params.length;
-		d_params = Util.resizeArray(d_params, d_params.length+1);
+		d_params = HttpClientUtil.resizeArray(d_params, d_params.length+1);
 		d_params[dreq] = new NVPair("digest-required", "true");
 	    }
 
@@ -791,10 +791,10 @@ public class DefaultAuthHandler implements AuthorizationHandler, GlobalConstants
 
 	if (ch_domain != -1)
 	{
-	    URI base = null;
+	    HttpClientURI base = null;
 	    try
 	    {
-		base = new URI(req.getConnection().getProtocol(),
+		base = new HttpClientURI(req.getConnection().getProtocol(),
 			       req.getConnection().getHost(),
 			       req.getConnection().getPort(),
 			       req.getRequestURI());
@@ -806,9 +806,9 @@ public class DefaultAuthHandler implements AuthorizationHandler, GlobalConstants
 			new StringTokenizer(ch_params[ch_domain].getValue());
 	    while (tok.hasMoreTokens())
 	    {
-		URI Uri;
+		HttpClientURI Uri;
 		try
-		    { Uri = new URI(base, tok.nextToken()); }
+		    { Uri = new HttpClientURI(base, tok.nextToken()); }
 		catch (ParseException pe)
 		    { continue; }
 
@@ -899,10 +899,10 @@ public class DefaultAuthHandler implements AuthorizationHandler, GlobalConstants
 	synchronized(ai)
 	{
 	    NVPair[] params = ai.getParams();
-	    params = Util.setValue(params, "nonce", nextnonce.getValue());
+	    params = HttpClientUtil.setValue(params, "nonce", nextnonce.getValue());
       /** @author  modified by Stefan Lieske, 2005/02/13 */
       //params = Util.setValue(params, "nc", "00000000");
-      params = Util.setValue(params, "nc", "00000000", false);
+      params = HttpClientUtil.setValue(params, "nc", "00000000", false);
 	    ai.setParams(params);
 	}
 
@@ -923,22 +923,22 @@ public class DefaultAuthHandler implements AuthorizationHandler, GlobalConstants
 	NVPair[] params = prev.getParams();
 	VerifyDigest
 	    verifier = new VerifyDigest(((String[]) prev.getExtraInfo())[0],
-					Util.getValue(params, "nonce"),
+					HttpClientUtil.getValue(params, "nonce"),
 					req.getMethod(),
-					Util.getValue(params, "uri"),
+					HttpClientUtil.getValue(params, "uri"),
 					hdr_name, resp);
 
 	if (resp.hasEntity())
 	{
 	    if (DebugAuth)
-		Util.logLine("Auth:  pushing md5-check-stream to verify " +
+		HttpClientUtil.logLine("Auth:  pushing md5-check-stream to verify " +
 			     "digest from " + hdr_name);
 	    resp.inp_stream = new MD5InputStream(resp.inp_stream, verifier);
 	}
 	else
 	{
 	    if (DebugAuth)
-		Util.logLine("Auth:  verifying digest from " + hdr_name);
+		HttpClientUtil.logLine("Auth:  verifying digest from " + hdr_name);
 	    verifier.verifyHash(new MD5().Final(), 0);
 	}
 
@@ -989,14 +989,14 @@ public class DefaultAuthHandler implements AuthorizationHandler, GlobalConstants
 
 	HttpHeaderElement qop = null;
 	if (auth_info != null  &&
-	    (qop = Util.getElement(auth_info, "qop")) != null  &&
+	    (qop = HttpClientUtil.getElement(auth_info, "qop")) != null  &&
 	    qop.getValue() != null  &&
 	    (qop.getValue().equalsIgnoreCase("auth")  ||
 	     !resp.hasEntity()  &&  qop.getValue().equalsIgnoreCase("auth-int"))
 	   )
 	{
 	    if (DebugAuth)
-		Util.logLine("Auth:  verifying rspauth from " + hdr_name);
+		HttpClientUtil.logLine("Auth:  verifying rspauth from " + hdr_name);
 	    verifier.verifyHash(new MD5().Final(), 0);
 	}
 	else
@@ -1004,7 +1004,7 @@ public class DefaultAuthHandler implements AuthorizationHandler, GlobalConstants
 	    // else push md5 stream and verify after body
 
 	    if (DebugAuth)
-		Util.logLine("Auth:  pushing md5-check-stream to verify " +
+		HttpClientUtil.logLine("Auth:  pushing md5-check-stream to verify " +
 			     "rspauth from " + hdr_name);
 	    resp.inp_stream = new MD5InputStream(resp.inp_stream, verifier);
 	}
@@ -1058,14 +1058,14 @@ public class DefaultAuthHandler implements AuthorizationHandler, GlobalConstants
 
 	if (DebugAuth)
 	{
-	    Util.logLine("Auth:  Entity-Info: '" + req.getRequestURI() + ":" +
+	    HttpClientUtil.logLine("Auth:  Entity-Info: '" + req.getRequestURI() + ":" +
 		 (ct == -1 ? "" : hdrs[ct].getValue()) + ":" +
 		 entity_body.length + ":" +
 		 (ce == -1 ? "" : hdrs[ce].getValue()) + ":" +
 		 (lm == -1 ? "" : hdrs[lm].getValue()) + ":" +
 		 (ex == -1 ? "" : hdrs[ex].getValue()) +"'");
-	    Util.logLine("Auth:  Entity-Body: '" + entity_hash.asHex() + "'");
-	    Util.logLine("Auth:  Entity-Digest: '" + entity_digest + "'");
+	    HttpClientUtil.logLine("Auth:  Entity-Body: '" + entity_hash.asHex() + "'");
+	    HttpClientUtil.logLine("Auth:  Entity-Digest: '" + entity_digest + "'");
 	}
 
 	return new MD5(entity_digest).asHex();
@@ -1219,7 +1219,7 @@ public class DefaultAuthHandler implements AuthorizationHandler, GlobalConstants
 
 	    msg = new byte[32 + host.length() + dom.length()];
 	    //"NTLMSSP".getBytes(0, 7, msg, 0);		// NTLMSSP message
-	    Util.getBytes("NTLMSSP",msg,0);
+	    HttpClientUtil.getBytes("NTLMSSP",msg,0);
             msg[8]  = 1;				// type 1
 	    int off = 32, len;
 
@@ -1240,7 +1240,7 @@ public class DefaultAuthHandler implements AuthorizationHandler, GlobalConstants
 	    msg[28] = (byte) off;			// host offset
 	    msg[29] = (byte) (off >> 8);
 //	    host.getBytes(0, len, msg, off);		// host
-	    Util.getBytes(host,len,msg,off);
+	    HttpClientUtil.getBytes(host,len,msg,off);
             off += len;
 
 	    len = dom.length();
@@ -1250,7 +1250,7 @@ public class DefaultAuthHandler implements AuthorizationHandler, GlobalConstants
 	    msg[19] = (byte) (len >> 8);
 	    msg[20] = (byte) off;			// domain offset
 	    msg[21] = (byte) (off >> 8);
-	    Util.getBytes(dom,len,msg,off);
+	    HttpClientUtil.getBytes(dom,len,msg,off);
             //dom.getBytes(0, len, msg, off);		// domain
 	    off += len;
 	}
@@ -1510,7 +1510,7 @@ public class DefaultAuthHandler implements AuthorizationHandler, GlobalConstants
 					      RoRequest req, RoResponse resp)
 		    throws AuthSchemeNotImplException
     {
-	String auth = Util.getValue(req.getHeaders(), "Authorization");
+	String auth = HttpClientUtil.getValue(req.getHeaders(), "Authorization");
 	AuthorizationInfo cred =
 	    AuthorizationInfo.getAuthorization(challenge, req, resp, false, false);
 
@@ -1567,7 +1567,7 @@ public class DefaultAuthHandler implements AuthorizationHandler, GlobalConstants
 	// calc MD4 hash of password (as unicode array)
 
 	byte[] hash = new MD4(uc).getHash();
-	return Util.resizeArray(hash, 21);
+	return HttpClientUtil.resizeArray(hash, 21);
     }
 
 
@@ -1586,7 +1586,7 @@ public class DefaultAuthHandler implements AuthorizationHandler, GlobalConstants
 	// store in byte array, truncating or extending to 14 bytes
 	byte[] keys = new byte[14];
 	//passw.getBytes(0, Math.min(passw.length(), 14), keys, 0);
-        Util.getBytes(passw,Math.min(passw.length(), 14),keys,0);
+        HttpClientUtil.getBytes(passw,Math.min(passw.length(), 14),keys,0);
 	// DES encode the magic value with the above generated keys
 	byte[] resp  = new byte[21],
 	       /* the following must decrypted with an all-zeroes key
@@ -1756,29 +1756,29 @@ public class DefaultAuthHandler implements AuthorizationHandler, GlobalConstants
 
 	    Vector pai;
 	    try
-		{ pai = Util.parseHeader(auth_info); }
+		{ pai = HttpClientUtil.parseHeader(auth_info); }
 	    catch (ParseException pe)
 		{ throw new IOException(pe.toString()); }
 
 	    String qop;
-	    HttpHeaderElement elem = Util.getElement(pai, "qop");
+	    HttpHeaderElement elem = HttpClientUtil.getElement(pai, "qop");
 	    if (elem == null  ||  (qop = elem.getValue()) == null  ||
 		(!qop.equalsIgnoreCase("auth")  &&
 		 !qop.equalsIgnoreCase("auth-int")))
 		return;
 
-	    elem = Util.getElement(pai, "rspauth");
+	    elem = HttpClientUtil.getElement(pai, "rspauth");
 	    if (elem == null  ||  elem.getValue() == null) return;
 	    byte[] digest = unHex(elem.getValue());
 
-	    elem = Util.getElement(pai, "cnonce");
+	    elem = HttpClientUtil.getElement(pai, "cnonce");
 	    if (elem != null  &&  elem.getValue() != null  &&
 		!elem.getValue().equals(cnonce))
 		throw new IOException("Digest auth scheme: received wrong " +
 				      "client-nonce '" + elem.getValue() +
 				      "' - expected '" + cnonce + "'");
 
-	    elem = Util.getElement(pai, "nc");
+	    elem = HttpClientUtil.getElement(pai, "nc");
 	    if (elem != null  &&  elem.getValue() != null  &&
 		!elem.getValue().equals(nc))
 		throw new IOException("Digest auth scheme: received wrong " +
@@ -1809,7 +1809,7 @@ public class DefaultAuthHandler implements AuthorizationHandler, GlobalConstants
 	    }
 
 	    if (DebugAuth)
-		Util.logLine("Auth:  rspauth from " + hdr +
+		HttpClientUtil.logLine("Auth:  rspauth from " + hdr +
 			     " successfully verified");
 	}
     }
@@ -1850,10 +1850,10 @@ public class DefaultAuthHandler implements AuthorizationHandler, GlobalConstants
 
 	    Vector pai;
 	    try
-		{ pai = Util.parseHeader(auth_info); }
+		{ pai = HttpClientUtil.parseHeader(auth_info); }
 	    catch (ParseException pe)
 		{ throw new IOException(pe.toString()); }
-	    HttpHeaderElement elem = Util.getElement(pai, "digest");
+	    HttpHeaderElement elem = HttpClientUtil.getElement(pai, "digest");
 	    if (elem == null  ||  elem.getValue() == null)
 		return;
 
@@ -1879,7 +1879,7 @@ public class DefaultAuthHandler implements AuthorizationHandler, GlobalConstants
 	    }
 
 	    if (DebugAuth)
-		Util.logLine("Auth:  digest from " + hdr +
+		HttpClientUtil.logLine("Auth:  digest from " + hdr +
 			     "successfully verified");
 	}
 

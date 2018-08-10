@@ -94,7 +94,7 @@ public final class Response implements RoResponse, GlobalConstants, Cloneable
             String       Version;
 
     /** the final URI of the document. */
-            URI          EffectiveURI = null;
+            HttpClientURI          EffectiveURI = null;
 
     /** any headers which were received and do not fit in the above list. */
             CIHashtable  Headers = new CIHashtable();
@@ -277,7 +277,7 @@ public final class Response implements RoResponse, GlobalConstants, Cloneable
      *
      * @exception IOException If any exception occurs on the socket.
      */
-    public final URI getEffectiveURI()  throws IOException
+    public final HttpClientURI getEffectiveURI()  throws IOException
     {
 	if (!got_headers)  getHeaders(true);
 	return EffectiveURI;
@@ -286,7 +286,7 @@ public final class Response implements RoResponse, GlobalConstants, Cloneable
     /**
      * set the final URI of the document. This is only for internal use.
      */
-    public void setEffectiveURI(URI final_uri)
+    public void setEffectiveURI(HttpClientURI final_uri)
     {
 	EffectiveURI = final_uri;
     }
@@ -348,7 +348,7 @@ public final class Response implements RoResponse, GlobalConstants, Cloneable
 
 	try
 	    { 
-            date = Util.parseDate(raw_date); }
+            date = HttpClientUtil.parseDate(raw_date); }
 	catch (IllegalArgumentException iae)
 	{
 	    long time;
@@ -455,7 +455,7 @@ public final class Response implements RoResponse, GlobalConstants, Cloneable
 	Date   date;
 
 	try
-	    { date = Util.parseDate(raw_date); }
+	    { date = HttpClientUtil.parseDate(raw_date); }
 	catch (IllegalArgumentException iae)
 	{
 	    // some servers erroneously send a number, so let's try that
@@ -529,9 +529,9 @@ public final class Response implements RoResponse, GlobalConstants, Cloneable
 	    {
 		if (DebugResp)
 		{
-		    Util.logLine("Resp:  (" + inp_stream.hashCode() + ")");
-		    Util.logMessage("       ");
-		    Util.logStackTrace(ioe);
+		    HttpClientUtil.logLine("Resp:  (" + inp_stream.hashCode() + ")");
+		    HttpClientUtil.logMessage("       ");
+		    HttpClientUtil.logStackTrace(ioe);
 		}
 		try { inp_stream.close(); } catch (Exception e) { }
 		throw ioe;
@@ -655,7 +655,7 @@ public final class Response implements RoResponse, GlobalConstants, Cloneable
 	boolean te_chunked = false, te_is_identity = true, ct_mpbr = false;
 	Vector  te_hdr = null;
 	try
-	    { te_hdr = Util.parseHeader(getHeader("Transfer-Encoding")); }
+	    { te_hdr = HttpClientUtil.parseHeader(getHeader("Transfer-Encoding")); }
 	catch (ParseException pe)
 	    { }
 	if (te_hdr != null)
@@ -678,7 +678,7 @@ public final class Response implements RoResponse, GlobalConstants, Cloneable
 	    String hdr;
 	    if ((hdr = getHeader("Content-Type")) != null)
 	    {
-		Vector phdr = Util.parseHeader(hdr);
+		Vector phdr = HttpClientUtil.parseHeader(hdr);
 		ct_mpbr = phdr.contains(new HttpHeaderElement("multipart/byteranges"))  ||
 			  phdr.contains(new HttpHeaderElement("multipart/x-byteranges"));
 	    }
@@ -703,7 +703,7 @@ public final class Response implements RoResponse, GlobalConstants, Cloneable
 
 	    te_hdr.removeElementAt(te_hdr.size()-1);
 	    if (te_hdr.size() > 0)
-		setHeader("Transfer-Encoding", Util.assembleHeader(te_hdr));
+		setHeader("Transfer-Encoding", HttpClientUtil.assembleHeader(te_hdr));
 	    else
 		deleteHeader("Transfer-Encoding");
 	}
@@ -729,7 +729,7 @@ public final class Response implements RoResponse, GlobalConstants, Cloneable
 
 	if (DebugResp)
 	{
-	    Util.logLine("Resp:  Response entity delimiter: " +
+	    HttpClientUtil.logLine("Resp:  Response entity delimiter: " +
 		(cd_type == CD_0       ? "No Entity"      :
 		 cd_type == CD_CLOSE   ? "Close"          :
 		 cd_type == CD_CONTLEN ? "Content-Length" :
@@ -771,7 +771,7 @@ public final class Response implements RoResponse, GlobalConstants, Cloneable
 	{
 	    Vector pco;
 	    try
-		{ pco = Util.parseHeader(getHeader("Connection")); }
+		{ pco = HttpClientUtil.parseHeader(getHeader("Connection")); }
 	    catch (ParseException pe)
 		{ pco = null; }
 
@@ -793,13 +793,13 @@ public final class Response implements RoResponse, GlobalConstants, Cloneable
 		}
 
 		if (pco.size() > 0)
-		    setHeader("Connection", Util.assembleHeader(pco));
+		    setHeader("Connection", HttpClientUtil.assembleHeader(pco));
 		else
 		    deleteHeader("Connection");
 	    }
 
 	    try
-		{ pco = Util.parseHeader(getHeader("Proxy-Connection")); }
+		{ pco = HttpClientUtil.parseHeader(getHeader("Proxy-Connection")); }
 	    catch (ParseException pe)
 		{ pco = null; }
 
@@ -821,7 +821,7 @@ public final class Response implements RoResponse, GlobalConstants, Cloneable
 		}
 
 		if (pco.size() > 0)
-		    setHeader("Proxy-Connection", Util.assembleHeader(pco));
+		    setHeader("Proxy-Connection", HttpClientUtil.assembleHeader(pco));
 		else
 		    deleteHeader("Proxy-Connection");
 	    }
@@ -857,10 +857,10 @@ public final class Response implements RoResponse, GlobalConstants, Cloneable
 	if (DebugResp)
 	{
 	    if (buf_pos == 0)
-		Util.logLine("Resp:  Reading Response headers " +
+		HttpClientUtil.logLine("Resp:  Reading Response headers " +
 			     inp_stream.hashCode());
 	    else
-		Util.logLine("Resp:  Resuming reading Response headers " +
+		HttpClientUtil.logLine("Resp:  Resuming reading Response headers " +
 			     inp_stream.hashCode());
 	}
 
@@ -900,9 +900,9 @@ public final class Response implements RoResponse, GlobalConstants, Cloneable
 	    {
 		if (DebugResp)
 		{
-		    Util.logLine("Resp:  (" + inp_stream.hashCode() + ")");
-		    Util.logMessage("       ");
-		    Util.logStackTrace(eof);
+		    HttpClientUtil.logLine("Resp:  (" + inp_stream.hashCode() + ")");
+		    HttpClientUtil.logMessage("       ");
+		    HttpClientUtil.logStackTrace(eof);
 		}
 		throw eof;
 	    }
@@ -924,7 +924,7 @@ public final class Response implements RoResponse, GlobalConstants, Cloneable
 	buf_pos = 0;
 	reading_lines = false;
 
-	char[] tmp = Util.resizeArray(hdrs, hdr_pos);
+	char[] tmp = HttpClientUtil.resizeArray(hdrs, hdr_pos);
 	hdr_pos = 0;
 	return tmp;
     }
@@ -944,7 +944,7 @@ public final class Response implements RoResponse, GlobalConstants, Cloneable
 	try
 	{
 	    readHeaderBlock(inp);
-	    trailers = Util.resizeArray(hdrs, hdr_pos);
+	    trailers = HttpClientUtil.resizeArray(hdrs, hdr_pos);
 	}
 	catch (IOException ioe)
 	{
@@ -972,7 +972,7 @@ public final class Response implements RoResponse, GlobalConstants, Cloneable
 	while ((got = inp.read(buf, 0, buf.length)) > 0)
 	{
 	    if (hdr_pos + got > hdrs.length)
-		hdrs = Util.resizeArray(hdrs, (hdr_pos + got) * 2);
+		hdrs = HttpClientUtil.resizeArray(hdrs, (hdr_pos + got) * 2);
 	    for (int idx=0; idx<got; idx++)
 		hdrs[hdr_pos++] = (char) (buf[idx] & 0xFF); 	// ISO-8859-1
 	}
@@ -992,11 +992,11 @@ public final class Response implements RoResponse, GlobalConstants, Cloneable
     {
 	if (DebugResp)
 	{
-	    Util.logLine("Resp:  Parsing Response headers from Request \"" +
+	    HttpClientUtil.logLine("Resp:  Parsing Response headers from Request \"" +
 			 method + " " + resource + "\":  (" +
 			 inp_stream.hashCode() + ")");
 	    String nl = System.getProperty("line.separator");
-	    Util.logMessage(nl + new String(headers) + nl);
+	    HttpClientUtil.logMessage(nl + new String(headers) + nl);
 	}
 
 
@@ -1020,14 +1020,14 @@ public final class Response implements RoResponse, GlobalConstants, Cloneable
 	// get the status line
 
 	int beg = 0;
-	int end = Util.findSpace(headers, beg);
+	int end = HttpClientUtil.findSpace(headers, beg);
 	if (end - beg > 4)
 	    Version = new String(headers, beg, end-beg);
 	else
 	    Version = "HTTP/1.0";		// NCSA bug
 
-	beg = Util.skipSpace(headers, end);
-	end = Util.findSpace(headers, beg);
+	beg = HttpClientUtil.skipSpace(headers, end);
+	end = HttpClientUtil.findSpace(headers, beg);
 	if (beg == end)
 	    throw new ProtocolException("Invalid HTTP status line received: " +
 					"no status code found in '" +
@@ -1064,7 +1064,7 @@ public final class Response implements RoResponse, GlobalConstants, Cloneable
 
 	// get the rest of the headers
 
-	parseHeaderFields(headers, Util.skipSpace(headers, end), Headers);
+	parseHeaderFields(headers, HttpClientUtil.skipSpace(headers, end), Headers);
 
 
 	/* make sure the connection isn't closed prematurely if we have
@@ -1087,13 +1087,13 @@ public final class Response implements RoResponse, GlobalConstants, Cloneable
 		  pcon = (String) Headers.get("Proxy-Connection");
 
 	    // parse connection header
-	    if ((vers == 1  &&  con != null  &&  Util.hasToken(con, "close"))
+	    if ((vers == 1  &&  con != null  &&  HttpClientUtil.hasToken(con, "close"))
 		||
 		(vers == 0  &&
 		 !((!used_proxy && con != null &&
-					Util.hasToken(con, "keep-alive"))  ||
+					HttpClientUtil.hasToken(con, "keep-alive"))  ||
 		   (used_proxy && pcon != null &&
-					Util.hasToken(pcon, "keep-alive")))
+					HttpClientUtil.hasToken(pcon, "keep-alive")))
 		)
 	       )
 		if (stream_handler != null)
@@ -1118,7 +1118,7 @@ public final class Response implements RoResponse, GlobalConstants, Cloneable
 	    throw (IOException) exception.fillInStackTrace();
 
 	if (DebugResp)
-	    Util.logLine("Resp:  Reading Response trailers " +
+	    HttpClientUtil.logLine("Resp:  Reading Response trailers " +
 			 inp_stream.hashCode());
 
 	try
@@ -1133,11 +1133,11 @@ public final class Response implements RoResponse, GlobalConstants, Cloneable
 	    {
 		if (DebugResp)
 		{
-		    Util.logLine("Resp:  Parsing Response trailers from " +
+		    HttpClientUtil.logLine("Resp:  Parsing Response trailers from " +
 				 "Request \"" + method + " " + resource +
 				 "\":  (" + inp_stream.hashCode() + ")");
 		    String nl = System.getProperty("line.separator");
-		    Util.logMessage(nl + new String(hdrs, 0, hdr_pos) + nl);
+		    HttpClientUtil.logMessage(nl + new String(hdrs, 0, hdr_pos) + nl);
 		}
 
 		parseHeaderFields(trailers, 0, Trailers);
@@ -1306,7 +1306,7 @@ public final class Response implements RoResponse, GlobalConstants, Cloneable
 		getHeader("Transfer-Encoding") == null)
 	    {
 		int rcvd = 0;
-		Data = Util.resizeArray(Data, ContentLength);
+		Data = HttpClientUtil.resizeArray(Data, ContentLength);
 
 		do
 		{
@@ -1327,7 +1327,7 @@ public final class Response implements RoResponse, GlobalConstants, Cloneable
 		}
 		*/
 		if (rcvd == -1)
-		    Data = Util.resizeArray(Data, off);
+		    Data = HttpClientUtil.resizeArray(Data, off);
 	    }
 	    else
 	    {
@@ -1337,21 +1337,21 @@ public final class Response implements RoResponse, GlobalConstants, Cloneable
 		do
 		{
 		    off  += rcvd;
-		    Data  = Util.resizeArray(Data, off+inc);
+		    Data  = HttpClientUtil.resizeArray(Data, off+inc);
 		} while ((rcvd = inp.read(Data, off, inc)) != -1);
 
-		Data = Util.resizeArray(Data, off);
+		Data = HttpClientUtil.resizeArray(Data, off);
 	    }
 	}
 	catch (InterruptedIOException iioe)
 	{
-	    Data = Util.resizeArray(Data, off);
+	    Data = HttpClientUtil.resizeArray(Data, off);
 	    interrupted = true;
 	    throw iioe;
 	}
 	catch (IOException ioe)
 	{
-	    Data = Util.resizeArray(Data, off);
+	    Data = HttpClientUtil.resizeArray(Data, off);
 	    throw ioe;
 	}
 	finally

@@ -76,20 +76,20 @@ class ContentEncodingModule implements HTTPClientModule, GlobalConstants
 	// parse Accept-Encoding header
 
 	NVPair[] hdrs = req.getHeaders();
-	int idx = Util.getIndex(hdrs, "Accept-Encoding");
+	int idx = HttpClientUtil.getIndex(hdrs, "Accept-Encoding");
 
 	Vector pae;
 	if (idx == -1)
 	{
 	    idx = hdrs.length;
-	    hdrs = Util.resizeArray(hdrs, idx+1);
+	    hdrs = HttpClientUtil.resizeArray(hdrs, idx+1);
 	    req.setHeaders(hdrs);
 	    pae = new Vector();
 	}
 	else
 	{
 	    try
-		{ pae = Util.parseHeader(hdrs[idx].getValue()); }
+		{ pae = HttpClientUtil.parseHeader(hdrs[idx].getValue()); }
 	    catch (ParseException pe)
 		{ throw new ModuleException(pe.toString()); }
 	}
@@ -97,7 +97,7 @@ class ContentEncodingModule implements HTTPClientModule, GlobalConstants
 
 	// done if "*;q=1.0" present
 
-	HttpHeaderElement all = Util.getElement(pae, "*");
+	HttpHeaderElement all = HttpClientUtil.getElement(pae, "*");
 	if (all != null)
 	{
 	    NVPair[] params = all.getParams();
@@ -138,7 +138,7 @@ class ContentEncodingModule implements HTTPClientModule, GlobalConstants
 	if (!pae.contains(new HttpHeaderElement("x-compress")))
 	    pae.addElement(new HttpHeaderElement("x-compress"));
 
-	hdrs[idx] = new NVPair("Accept-Encoding", Util.assembleHeader(pae));
+	hdrs[idx] = new NVPair("Accept-Encoding", HttpClientUtil.assembleHeader(pae));
 
 	return REQ_CONTINUE;
     }
@@ -173,7 +173,7 @@ class ContentEncodingModule implements HTTPClientModule, GlobalConstants
 
 	Vector pce;
 	try
-	    { pce = Util.parseHeader(ce); }
+	    { pce = HttpClientUtil.parseHeader(ce); }
 	catch (ParseException pe)
 	    { throw new ModuleException(pe.toString()); }
 
@@ -184,7 +184,7 @@ class ContentEncodingModule implements HTTPClientModule, GlobalConstants
 	if (encoding.equalsIgnoreCase("gzip")  ||
 	    encoding.equalsIgnoreCase("x-gzip"))
 	{
-	    if (DebugMods) Util.logLine("CEM:   pushing gzip-input-stream");
+	    if (DebugMods) HttpClientUtil.logLine("CEM:   pushing gzip-input-stream");
 
 	    resp.inp_stream = new GZIPInputStream(resp.inp_stream);
 	    pce.removeElementAt(pce.size()-1);
@@ -192,7 +192,7 @@ class ContentEncodingModule implements HTTPClientModule, GlobalConstants
 	}
 	else if (encoding.equalsIgnoreCase("deflate"))
 	{
-	    if (DebugMods) Util.logLine("CEM:   pushing inflater-input-stream");
+	    if (DebugMods) HttpClientUtil.logLine("CEM:   pushing inflater-input-stream");
 
 	    resp.inp_stream = new InflaterInputStream(resp.inp_stream);
 	    pce.removeElementAt(pce.size()-1);
@@ -202,7 +202,7 @@ class ContentEncodingModule implements HTTPClientModule, GlobalConstants
 		 encoding.equalsIgnoreCase("x-compress"))
 	{
 	    if (DebugMods)
-		Util.logLine("CEM:   pushing uncompress-input-stream");
+		HttpClientUtil.logLine("CEM:   pushing uncompress-input-stream");
 
 	    resp.inp_stream = new UncompressInputStream(resp.inp_stream);
 	    pce.removeElementAt(pce.size()-1);
@@ -210,18 +210,18 @@ class ContentEncodingModule implements HTTPClientModule, GlobalConstants
 	}
 	else if (encoding.equalsIgnoreCase("identity"))
 	{
-	    if (DebugMods) Util.logLine("CEM:   ignoring 'identity' token");
+	    if (DebugMods) HttpClientUtil.logLine("CEM:   ignoring 'identity' token");
 	    pce.removeElementAt(pce.size()-1);
 	}
 	else
 	{
 	    if (DebugMods)
-		Util.logLine("CEM:   Unknown content encoding '" + encoding +
+		HttpClientUtil.logLine("CEM:   Unknown content encoding '" + encoding +
 			     "'");
 	}
 
 	if (pce.size() > 0)
-	    resp.setHeader("Content-Encoding", Util.assembleHeader(pce));
+	    resp.setHeader("Content-Encoding", HttpClientUtil.assembleHeader(pce));
 	else
 	    resp.deleteHeader("Content-Encoding");
     }
